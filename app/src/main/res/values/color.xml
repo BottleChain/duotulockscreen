@@ -1,0 +1,35 @@
+<resources>
+
+    <color name="bg">#f3f3f3</color>
+    <color name="touming">#00000000</color>
+    <color name="bai">#ffffff</color>
+    <color name="bai_95per">#f2ffffff</color>
+    <color name="bai_90per">#e6ffffff</color>
+    <color name="bai_80per">#ccffffff</color>
+    <color name="bai_70per">#b2ffffff</color>
+    <color name="bai_60per">#99ffffff</color>
+    <color name="bai_40per">#66ffffff</color>
+    <color name="bai_30per">#4cffffff</color>
+    <color name="bai_10per">#1affffff</color>
+    <color name="bai_15per">#26ffffff</color>
+    <color name="bai_5per">#0cffffff</color>
+    <color name="hei">#000000</color>
+    <color name="hong">#FFFF4B5C</color>
+    <color name="hei_80per">#cc000000</color>
+    <color name="hei_60per">#A6000000</color>
+    <color name="hei_65">#A6000000</color>
+    <color name="hei_50per">#88000000</color>
+    <color name="hei_26per">#42000000</color>
+    <color name="hei_20per">#33000000</color>
+    <color name="fen">#ff6666</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="red">#E51A18</color>
+
+    <color name="settings_item_title_color">#99000000</color>
+    <color name="settings_item_hint_color">#77000000</color>
+
+    <color name="text_color1">#7F7F7F</color>
+    <color name="text_color2">#ACAEB0</color>
+</resources>

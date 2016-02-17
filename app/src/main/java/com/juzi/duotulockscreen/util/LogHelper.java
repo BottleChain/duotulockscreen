@@ -3,7 +3,7 @@ package com.juzi.duotulockscreen.util;
 import android.util.Log;
 
 public class LogHelper {
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     public static void i(String TAG, String msg) {
         if (DEBUG) {

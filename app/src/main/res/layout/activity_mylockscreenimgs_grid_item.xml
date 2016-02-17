@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingRight="15dp">
+    <ImageView
+        android:id="@+id/iv_item_content"
+        android:layout_width="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/ic_nopic"
+        android:layout_height="189dp"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv_item_title"
+        android:layout_below="@id/iv_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        android:text="图片标题"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#7f7f7f"/>
+
+        <CheckBox
+            android:id="@+id/cb_item"
+            android:gravity="right"
+            android:button="@null"
+            android:drawableRight="@drawable/selector_checkbox_bg"
+            android:paddingBottom="150dp"
+            android:paddingRight="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="189dp"/>
+</RelativeLayout>

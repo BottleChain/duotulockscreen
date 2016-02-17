@@ -121,7 +121,7 @@ public class LockView extends ImageView {
 //        mWidth = context.getResources().getDisplayMetrics().widthPixels;
 //		mHeight = context.getResources().getDisplayMetrics().heightPixels;
         mRadius = DisplayUtil.dip2px(context, 200);
-        mLockDelta = DisplayUtil.dip2px(context, 100);
+        mLockDelta = DisplayUtil.dip2px(context, 80);
 
 		mDestBottomRect.set(0, 0, mWidth, mRadius);
 

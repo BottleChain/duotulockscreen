@@ -1,76 +1,85 @@
 package com.juzi.duotulockscreen.activity;
 
-import android.app.Activity;
+import android.app.ActionBar;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Window;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.juzi.duotulockscreen.R;
+import com.juzi.duotulockscreen.adapter.MyLockScreensGalleryAdapter;
+import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.service.LockScreenService;
+import com.juzi.duotulockscreen.util.LogHelper;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 
-public class ManinActivity extends BaseActivity {
+public class ManinActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+    private static final String TAG = "MainActivity";
+    private ImageButton mIvTopBarLeft;
+    private TextView mTvTopBarRight;
+    private GridView mGridView;
+    private ArrayList<LockScreenImgBean> mData  = new ArrayList<LockScreenImgBean>();
+    private MyLockScreensGalleryAdapter mAdapter;
+
     @Override
 protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initCustomActionBar();
         setContentView(R.layout.activity_main);
-
-        setStatusBarTextColor(this, 1);
-
         Intent lock = new Intent(this, LockScreenService.class);
         startService(lock);
+        assignViews();
     }
 
-    /**
-     * 只支持MIUI V6
-     * @param context
-     * @param type 0--只需要状态栏透明 1-状态栏透明且黑色字体 2-清除黑色字体
-     */
-    public static void setStatusBarTextColor(Activity context,int type){
-        if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")){
+    private void assignViews() {
+        mAdapter = new MyLockScreensGalleryAdapter(this, mData);
+        mGridView = (GridView) findViewById(R.id.gv_gridview);
+        mGridView.setAdapter(mAdapter);
+        mGridView.setOnItemClickListener(this);
+
+//        mRlMyfavoriteEditBottom = (RelativeLayout) findViewById(R.id.rl_edit_bottom_bar);
+//        ImageView ivMyfavoriteBootomDelete = (ImageView) findViewById(R.id.iv_bootom_delete);
+//
+//        btMyfavoriteAdd.setOnClickListener(this);
+//        ivMyfavoriteBootomDelete.setOnClickListener(this);
+//
+//        mBottomOutAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
+//                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1.0f);
+//        mBottomInAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
+//                Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0f);
+//        mBottomInAnim.setDuration(120);
+//        mBottomOutAnim.setDuration(120);
+    }
+
+    //自定义actionbar
+    private void initCustomActionBar() {
+        ActionBar actionBar = getActionBar();
+        LogHelper.d(TAG, "ActivitonBAr = " + actionBar);
+        if (actionBar == null) {
             return;
         }
-        Window window = context.getWindow();
-        Class clazz = window.getClass();
-        try {
-            int tranceFlag = 0;
-            int darkModeFlag = 0;
-            Class layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
-            Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_TRANSPARENT");
-            tranceFlag = field.getInt(layoutParams);
-            field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
-            darkModeFlag = field.getInt(layoutParams);
-            Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
-            if (type == 0){
-                extraFlagField.invoke(window, tranceFlag, tranceFlag);//只需要状态栏透明
-            }else if(type == 1){
-                extraFlagField.invoke(window, tranceFlag | darkModeFlag, tranceFlag | darkModeFlag);//状态栏透明且黑色字体
-            }else {
-                extraFlagField.invoke(window, 0, darkModeFlag);//清除黑色字体
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.home_page_top_bar);
+
+        mIvTopBarLeft = (ImageButton) getActionBar().getCustomView().findViewById(R.id.iv_top_bar_left);
+        mIvTopBarLeft.setOnClickListener(this);
+        mTvTopBarRight = (TextView) getActionBar().getCustomView().findViewById(R.id.tv_top_bar_right);
+        mTvTopBarRight.setOnClickListener(this);
     }
 
-//    private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
-//    private static boolean isMiUIV6() {
-//        try {
-//            final BuildProperties prop = BuildProperties.newInstance();
-//            String name = prop.getProperty(KEY_MIUI_VERSION_NAME, "");
-//            if ("V6".equals(name)){
-//                return  true;
-//            }else {
-//                return false;
-//            }
-//            //            return prop.getProperty(KEY_MIUI_VERSION_CODE, null) != null
-//            //                    || prop.getProperty(KEY_MIUI_VERSION_NAME, null) != null
-//            //                    || prop.getProperty(KEY_MIUI_INTERNAL_STORAGE, null) != null;
-//        } catch (final IOException e) {
-//            return false;
-//        }
-//    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
 }

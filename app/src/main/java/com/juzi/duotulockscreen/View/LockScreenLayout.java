@@ -52,7 +52,7 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
             int flags = 0;
             flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             flags = flags | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            flags = flags | View.SYSTEM_UI_FLAG_LOW_PROFILE;
+//            flags = flags | View.SYSTEM_UI_FLAG_LOW_PROFILE; //这个属性使状态栏部分图标消失，只剩电池和事件，并且变得很暗
             flags = flags | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 //            flags = flags | View.SYSTEM_UI_FLAG_FULLSCREEN;
             flags = flags | View.SYSTEM_UI_FLAG_IMMERSIVE;
@@ -478,7 +478,7 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
     }
 
     public void onUnLocking(float f) {
-        float bottoma = Math.max(f * 5.0f - 3, 0); //底部字的透明度变化
+        float bottoma = Math.max(f * 4.0f - 3, 0); //底部字的透明度变化
         mRlBottom.setAlpha(bottoma);
 
 //        float topa = Math.min(1.0f, f * 4.0f);

@@ -1,5 +1,5 @@
 <resources>
-
+    <color name="main">#fe8100ff</color>
     <color name="bg">#f3f3f3</color>
     <color name="touming">#00000000</color>
     <color name="bai">#ffffff</color>

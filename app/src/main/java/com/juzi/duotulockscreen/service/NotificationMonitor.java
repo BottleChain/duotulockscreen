@@ -59,7 +59,7 @@ public class NotificationMonitor extends NotificationListenerService {
         super.onCreate();
         LogHelper.i(TAG, "onCreate...");
         SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isLockScreen = sp1.getBoolean(GlobalConstantValues.KEY_SHARED_LOCKSCREEN, false);
+        boolean isLockScreen = sp1.getBoolean(GlobalConstantValues.KEY_SHARED_LOCKSCREEN, true);
         if (isLockScreen) {
             Intent servie = new Intent(getBaseContext(), LockScreenService.class);
             servie.putExtra(LockScreenService.SERVICE_TYPE, 0);

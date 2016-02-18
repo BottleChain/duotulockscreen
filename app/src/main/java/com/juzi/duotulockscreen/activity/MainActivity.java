@@ -17,7 +17,7 @@ import com.juzi.duotulockscreen.util.LogHelper;
 
 import java.util.ArrayList;
 
-public class ManinActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private static final String TAG = "MainActivity";
     private ImageButton mIvTopBarLeft;
     private TextView mTvTopBarRight;
@@ -26,7 +26,7 @@ public class ManinActivity extends BaseActivity implements View.OnClickListener,
     private MyLockScreensGalleryAdapter mAdapter;
 
     @Override
-protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initCustomActionBar();
         setContentView(R.layout.activity_main);

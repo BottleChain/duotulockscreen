@@ -1,6 +1,7 @@
 package com.juzi.duotulockscreen.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,12 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.juzi.duotulockscreen.R;
+import com.juzi.duotulockscreen.activity.PickImgActivity;
 import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 
 import java.util.ArrayList;
 
-public class MyLockScreensGalleryAdapter extends BaseAdapter {
+public class LockScreensGalleryAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<LockScreenImgBean> mData;
     private int mImgHeight;
@@ -27,7 +29,7 @@ public class MyLockScreensGalleryAdapter extends BaseAdapter {
 
     private boolean[] mCheckedStatus; //一个数组用来记录某个位置是否是被选中的状态，如果被选中则为true，否则为false
 
-    public MyLockScreensGalleryAdapter(Context context, ArrayList<LockScreenImgBean> data) {
+    public LockScreensGalleryAdapter(Context context, ArrayList<LockScreenImgBean> data) {
         mContext = context;
         mData = data;
         mCheckedStatus = new boolean[mData.size()];
@@ -75,6 +77,8 @@ public class MyLockScreensGalleryAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         // TODO: 2016/2/17 点击添加图片
+                        Intent intent = new Intent(mContext, PickImgActivity.class);
+                        mContext.startActivity(intent);
                     }
                 });
             }

@@ -18,7 +18,7 @@
         android:id="@+id/v_divider"
         android:layout_toRightOf="@id/iv_top_bar_left"
         android:background="@color/bai"
-        android:layout_margin="10dp"
+        android:layout_margin="15dp"
         android:layout_width="1px"
         android:layout_height="match_parent"/>
 

@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.juzi.duotulockscreen.R;
-import com.juzi.duotulockscreen.adapter.MyLockScreensGalleryAdapter;
+import com.juzi.duotulockscreen.adapter.LockScreensGalleryAdapter;
 import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.service.LockScreenService;
 import com.juzi.duotulockscreen.util.LogHelper;
@@ -23,7 +23,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private TextView mTvTopBarRight;
     private GridView mGridView;
     private ArrayList<LockScreenImgBean> mData  = new ArrayList<LockScreenImgBean>();
-    private MyLockScreensGalleryAdapter mAdapter;
+    private LockScreensGalleryAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void assignViews() {
-        mAdapter = new MyLockScreensGalleryAdapter(this, mData);
+        mAdapter = new LockScreensGalleryAdapter(this, mData);
         mGridView = (GridView) findViewById(R.id.gv_gridview);
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
@@ -80,6 +80,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+//        if (position == mData.size()) {
+//            Intent intent = new Intent(this, PickImgActivity.class);
+//            startActivity(intent);
+//        }
     }
 }

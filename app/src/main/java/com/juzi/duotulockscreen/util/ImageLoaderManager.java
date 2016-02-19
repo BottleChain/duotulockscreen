@@ -56,7 +56,7 @@ public class ImageLoaderManager {
         //设置默认的desplayImageOptions
 		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
 				.cacheInMemory(true)
-				.imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+				.imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
 				.cacheOnDisk(true)
 				.build();
 

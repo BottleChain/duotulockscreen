@@ -33,6 +33,20 @@
         android:textColor="#ffffff"
         android:textSize="18sp"/>
 
+    <Button
+        android:id="@+id/bt_next"
+        android:text="下一步(0/20)"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textSize="13sp"
+        android:textColor="#ffffff"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/selector_bt_next_bg"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"/>
+
     <View
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"

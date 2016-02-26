@@ -1,6 +1,6 @@
-package com.juzi.duotulockscreen.bean;
+package com.juzi.duotulockscreen.pickimg;
 
-public class LocalPictureBean {
+public class PickImgBean {
     private String mPath;
     private boolean mIsChecked;
 

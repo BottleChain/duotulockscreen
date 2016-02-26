@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.adapter;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.juzi.duotulockscreen.R;
-import com.juzi.duotulockscreen.View.LockView;
-import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 
 import java.util.ArrayList;

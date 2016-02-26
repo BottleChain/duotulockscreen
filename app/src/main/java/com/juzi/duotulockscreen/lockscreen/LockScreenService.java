@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.service;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.app.KeyguardManager;
 import android.app.Service;
@@ -16,10 +16,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.juzi.duotulockscreen.View.LockScreenLayout;
-import com.juzi.duotulockscreen.View.LockView;
-import com.juzi.duotulockscreen.activity.LockScreenNullActivity;
-import com.juzi.duotulockscreen.receiver.LockScreenReceiver;
 import com.juzi.duotulockscreen.util.LogHelper;
 
 public class LockScreenService extends Service implements LockView.onUnLockListener {
@@ -209,6 +205,8 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
         if (isLock) {
             mWindowManager.removeView(mLockScreenLayout);
             //needShowNext = true;
+
+            //开启nullActivity，强制解锁系统锁屏
             Intent intent1 = new Intent(getBaseContext(), LockScreenNullActivity.class);
             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent1.putExtra("startType", 0);

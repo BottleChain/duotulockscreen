@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.service;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -8,11 +8,12 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+
 import com.juzi.duotulockscreen.util.GlobalConstantValues;
 import com.juzi.duotulockscreen.util.LogHelper;
 
 /**
- *
+ * 可以接受其他应用的通知的服务，继承了这个后就成为了系统服务，系统杀掉了也是重启，利用这个特点使锁屏常驻
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class NotificationMonitor extends NotificationListenerService {

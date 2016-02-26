@@ -1,10 +1,9 @@
-package com.juzi.duotulockscreen.receiver;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.juzi.duotulockscreen.service.LockScreenService;
 import com.juzi.duotulockscreen.util.LogHelper;
 
 public class LockScreenReceiver extends BroadcastReceiver {

@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.adapter;
+package com.juzi.duotulockscreen.pickimg;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,22 +10,21 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.juzi.duotulockscreen.R;
-import com.juzi.duotulockscreen.bean.LocalPictureBean;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 
 import java.util.List;
 
 public class PickImgGalleryAdapter extends BaseAdapter {
     private Context mContext;
-    private List<LocalPictureBean> mData;
-    private List<LocalPictureBean> mCheckedImage;
+    private List<PickImgBean> mData;
+    private List<PickImgBean> mCheckedImage;
     final private static int CAMERA_BG_COLOR = Color.DKGRAY;
     final private static int NORMAL_BG_COLOR = 0xFFDDDCD8;
     private int mItemWidth = 0, mItemHeight = 0;
     private OnCheckedImageCountChangeListener mCheckedCountChangeLister;
     private static final int MAX_COUNT = 20;
 
-    public PickImgGalleryAdapter(Context context, List<LocalPictureBean> data, List<LocalPictureBean> checkedImage) {
+    public PickImgGalleryAdapter(Context context, List<PickImgBean> data, List<PickImgBean> checkedImage) {
         mContext = context;
         mData = data;
         mCheckedImage = checkedImage;
@@ -33,7 +32,7 @@ public class PickImgGalleryAdapter extends BaseAdapter {
         mItemHeight = context.getResources().getDimensionPixelSize(R.dimen.pickimg_grid_img_height);
     }
 
-    public void setData(List<LocalPictureBean> data) {
+    public void setData(List<PickImgBean> data) {
         mData = data;
     }
 
@@ -41,7 +40,7 @@ public class PickImgGalleryAdapter extends BaseAdapter {
         mCheckedCountChangeLister = listener;
     }
 
-    public List<LocalPictureBean> getCheckedImage() {
+    public List<PickImgBean> getCheckedImage() {
         return mCheckedImage;
     }
 
@@ -93,7 +92,7 @@ public class PickImgGalleryAdapter extends BaseAdapter {
         }
 
         position -= 1;
-        LocalPictureBean bean = mData.get(position);
+        PickImgBean bean = mData.get(position);
         //改变选中状态时用，记录位置
         holder.mCheckBox.setTag(position);
         holder.mCheckBox.setChecked(bean.isChecked());
@@ -128,7 +127,6 @@ public class PickImgGalleryAdapter extends BaseAdapter {
         public void onClick(View v) {
             CheckBox cb = (CheckBox) v;
             boolean isChecked = cb.isChecked();
-            // can not > 9 checked
             if (mCheckedImage.size() >= MAX_COUNT && isChecked) {
                 cb.setChecked(false);
                 Toast.makeText(mContext, "不能选中超过20个", Toast.LENGTH_SHORT).show();
@@ -142,7 +140,7 @@ public class PickImgGalleryAdapter extends BaseAdapter {
                 p = (Integer) tag;
             }
 
-            LocalPictureBean viewBean = mData.get(p);
+            PickImgBean viewBean = mData.get(p);
             if (viewBean == null) {
                 return;
             }

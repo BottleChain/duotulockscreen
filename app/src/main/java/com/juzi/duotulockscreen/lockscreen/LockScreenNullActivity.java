@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.activity;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import com.juzi.duotulockscreen.R;
+import com.juzi.duotulockscreen.activity.BaseActivity;
 
 
 /**

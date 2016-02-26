@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.adapter;
+package com.juzi.duotulockscreen.lockscreengallery;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.juzi.duotulockscreen.R;
-import com.juzi.duotulockscreen.activity.PickImgActivity;
-import com.juzi.duotulockscreen.bean.LockScreenImgBean;
+import com.juzi.duotulockscreen.pickimg.PickImgActivity;
+import com.juzi.duotulockscreen.lockscreen.LockScreenImgBean;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 
 import java.util.ArrayList;

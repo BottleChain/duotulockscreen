@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/hei_80per" />
+
+    <RelativeLayout
+        android:id="@+id/rl_pop_content"
+        android:background="@color/bai"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="450dp">
+        <ListView
+            android:id="@+id/listview_popwindow"
+            android:layout_width="match_parent"
+            android:divider="@color/hei_20per"
+            android:dividerHeight="1px"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_height="wrap_content">
+        </ListView>
+    </RelativeLayout>
+
+</RelativeLayout>

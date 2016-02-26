@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.View;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

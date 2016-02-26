@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:scaleType="center"
         android:src="@drawable/ic_nopic"
-        android:layout_height="189dp"/>
+        android:layout_height="@dimen/grid_img_height"/>
 
     <TextView
         android:visibility="gone"

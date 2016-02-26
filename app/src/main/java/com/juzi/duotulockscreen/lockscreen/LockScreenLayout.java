@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.View;
+package com.juzi.duotulockscreen.lockscreen;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -14,8 +14,6 @@ import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
 import com.juzi.duotulockscreen.R;
-import com.juzi.duotulockscreen.adapter.LockScreenAdapter;
-import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.database.MyDatabaseHelper;
 import com.juzi.duotulockscreen.util.UmengEventIds;
 import com.umeng.analytics.MobclickAgent;

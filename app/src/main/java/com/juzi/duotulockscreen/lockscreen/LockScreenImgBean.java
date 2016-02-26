@@ -1,4 +1,4 @@
-package com.juzi.duotulockscreen.bean;
+package com.juzi.duotulockscreen.lockscreen;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

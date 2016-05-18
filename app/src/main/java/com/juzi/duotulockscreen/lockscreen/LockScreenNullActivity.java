@@ -52,6 +52,11 @@ public class LockScreenNullActivity extends BaseActivity {
 //        v.setSystemUiVisibility(flags);
     }
 
+    @Override
+    protected boolean getIsFullScreen() {
+        return true;
+    }
+
     Intent mIntent;
     @Override
     protected void onNewIntent(Intent intent) {

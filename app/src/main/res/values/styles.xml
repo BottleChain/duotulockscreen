@@ -1,15 +1,73 @@
 <resources>
+    <style name="loading_progress" parent="@style/dialog">
+        <!--<item name="android:windowEnterAnimation">@null</item>-->
+        <!--<item name="android:windowExitAnimation">@null</item>-->
+
+        <!-- 背景昏暗 -->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="dialog" parent="@android:style/Theme.Dialog">
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <!-- 背景昏暗 -->
+        <item name="android:backgroundDimEnabled">true</item>
+
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="myCircleLoadingProgressBarStyleSmall">
+        <item name="android:indeterminateDrawable">@drawable/loading_progressbar_anim</item>
+        <item name="android:maxHeight">33dp</item>
+        <item name="android:minHeight">33dp</item>
+        <item name="android:maxWidth">33dp</item>
+        <item name="android:minWidth">33dp</item>
+    </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="My.Holo.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 
+    <!-- Base application theme. -->
+    <style name="My.Holo.Light.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar">
+        <!--<style name="My.Holo.Light.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar">-->
+        <item name="android:windowBackground">@color/main_bg</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="My.Holo.NoActionBar" parent="android:Theme.Holo.NoActionBar">
+        <item name="android:windowBackground">@color/main_bg_dark</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="My.Holo.Light.NoActionBar.Fullscreen" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/main_bg</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="My.Holo.NoActionBar.Fullscreen" parent="android:Theme.Holo.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/main_bg_dark</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
     <style name="shadowText">
-        <item name="android:shadowColor">@color/hei_26per</item>
+        <item name="android:shadowColor">@color/hei_30</item>
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">3</item>
     </style>
-
 </resources>

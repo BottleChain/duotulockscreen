@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/main"
     android:layout_height="48dp">
 
     <ImageButton
@@ -24,7 +23,7 @@
         android:gravity="center"
         android:text="编辑"
         android:paddingLeft="15dp"
-        android:textColor="@color/selector_text_click"
+        android:textColor="@color/click_selector_textcolor_bai"
         android:paddingRight="20dp"/>
 
     <RelativeLayout

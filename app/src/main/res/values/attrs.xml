@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ClipCoverView">
+        <attr name="ccv_radius" format="dimension" />
+        <attr name="ccv_bg_color" format="color" />
+        <attr name="ccv_centerX" format="dimension" />
+        <attr name="ccv_centerY" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ZoomImageView">
+        <attr name="ziv_scaleType" format="integer" />
+        <attr name="ziv_hasClip" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ClipCoveredViewStyle">
+        <!-- 截屏时画的一个透明矩形,周围是黑色透明，这里代表黑色透明区域的左上右下宽度值,除去黑色区域,剩下的就是透明区域 -->
+        <attr name="left_gap" format="dimension" />
+        <attr name="top_gap" format="dimension" />
+        <attr name="right_gap" format="dimension" />
+        <attr name="bottom_gap" format="dimension" />
+        <!-- 外围区域的填充颜色 -->
+        <attr name="out_fill_color" format="color" />
+
+        <!-- 矩形透明区域是有边框和横竖线的，下面规定了一些边框和横竖线的属性 -->
+        <!-- 边框线的宽度 -->
+        <attr name="frame_line_width" format="dimension" />
+        <!-- 内部线条的宽度 -->
+        <attr name="inner_line_width" format="dimension" />
+        <!-- 内部线条的颜色 -->
+        <attr name="inner_line_color" format="color" />
+        <!-- 内部线条的个数 -->
+        <attr name="inner_line_horizontal_count" format="integer" />
+        <attr name="inner_line_vertical_count" format="integer" />
+        <!-- 小部件1 默认会画在截图区域左上角 -->
+        <attr name="widget_first" format="reference" />
+        <!-- 小部件1距离截图区域左边距离 -->
+        <attr name="widget_first_paddingLeft" format="dimension" />
+        <!-- 小部件1距离截图区域上边距离 -->
+        <attr name="widget_first_paddingTop" format="dimension" />
+        <!-- 小部件2 -->
+        <attr name="widget_second" format="reference" />
+        <!-- 小部件2距离截图区域左边距离 -->
+        <attr name="widget_second_paddingRight" format="dimension" />
+        <!-- 小部件2距离截图区域上边距离 -->
+        <attr name="widget_second_paddingTop" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -6,7 +6,7 @@
         android:id="@+id/shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/hei_80per" />
+        android:background="@color/hei_80" />
 
     <RelativeLayout
         android:id="@+id/rl_pop_content"
@@ -17,7 +17,7 @@
         <ListView
             android:id="@+id/listview_popwindow"
             android:layout_width="match_parent"
-            android:divider="@color/hei_20per"
+            android:divider="@color/hei_20"
             android:dividerHeight="1px"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

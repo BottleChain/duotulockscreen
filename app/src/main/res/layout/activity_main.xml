@@ -3,36 +3,91 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/main"
     android:layout_height="match_parent">
 
-    <GridView
-        android:background="@color/bg"
-        android:paddingLeft="10dp"
-        android:id="@+id/gv_gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:listSelector="@android:color/transparent"
-        android:verticalSpacing="5dp"
-        android:numColumns="3"
-        android:gravity="center"
-        android:stretchMode="columnWidth"
-        />
-
     <RelativeLayout
-        android:id="@+id/rl_edit_bottom_bar"
+        android:id="@+id/rl_header"
+        android:background="@color/actionbar_bg_color"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        >
+        android:layout_height="@dimen/actionbar_h">
         <ImageView
-            android:id="@+id/iv_bootom_delete"
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/actionbar_h"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:background="@drawable/click_selector_actionbar_bg"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_centerInParent="true"
+            android:text="我的锁屏图库"
+            android:textSize="15sp"
+            android:textColor="@color/bai"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_delete" />
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/click_selector_actionbar_bg"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:scaleType="center"
+            android:src="@drawable/add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 
+    <android.support.v4.widget.DrawerLayout
+        android:layout_below="@id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/draw_layout">
+        <RelativeLayout
+            android:id="@+id/rl_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <GridView
+                android:id="@+id/gv_gridview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:listSelector="@android:color/transparent"
+                android:verticalSpacing="1dp"
+                android:horizontalSpacing="1dp"
+                android:numColumns="3"
+                android:gravity="center"
+                android:stretchMode="columnWidth"
+                />
+            <include
+                android:visibility="gone"
+                android:id="@+id/layout_nocontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                layout="@layout/layout_nocontent"/>
+            <RelativeLayout
+                android:id="@+id/rl_edit_bottom_bar"
+                android:layout_width="match_parent"
+                android:background="@color/actionbar_bg_color"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone"
+                >
+                <ImageView
+                    android:id="@+id/iv_bootom_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/ic_delete" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/left_drawer"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            layout="@layout/activity_newmain_leftdrawer"/>
+    </android.support.v4.widget.DrawerLayout>
 </RelativeLayout>

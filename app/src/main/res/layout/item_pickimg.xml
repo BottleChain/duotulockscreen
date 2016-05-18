@@ -2,24 +2,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
                 android:gravity="center" >
 
     <ImageView
         android:id="@+id/iv_pickimage_item"
         android:layout_width="match_parent"
+        android:src="@drawable/icon_nopic"
         android:layout_height="@dimen/pickimg_grid_img_height"
         android:scaleType="centerCrop"/>
 
-    <CheckBox
-        android:id="@+id/cb_pickimage_item"
-        style="@android:style/Widget.CompoundButton.CheckBox"
-        android:layout_width="35dp"
-        android:layout_height="40dp"
-        android:layout_gravity="right"
-        android:button="@null"
-        android:drawableLeft="@drawable/selector_checkbox_bg"
-        android:focusable="false"
+    <View
+        android:visibility="gone"
+        android:id="@+id/shadow"
+        android:background="@color/hei_50"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pickimg_grid_img_height"
+        />
+
+    <ImageView
+        android:id="@+id/iv_pickimg_chose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/selector_ivchose_bg"
         android:layout_alignParentRight="true"
-        android:paddingTop="8dp"/>
+        android:paddingBottom="25dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"/>
 </RelativeLayout>

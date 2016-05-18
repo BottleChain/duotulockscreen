@@ -7,7 +7,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.juzi.duotulockscreen.lockscreen.LockScreenImgBean;
+import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -89,16 +89,11 @@ public class MyDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion,
                           int newVersion) {
-//        try {
-//            if (newVersion == 3) { //3的时候添加锁屏图片表
-//                TableUtils.createTable(connectionSource, LockScreenImgBean.class);
-//            } else {
-//                TableUtils.dropTable(connectionSource, MySubscribeBean.class, true);
-//                TableUtils.dropTable(connectionSource, MyFavoriteBean.class, true);
-//                onCreate(sqLiteDatabase, connectionSource);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            TableUtils.dropTable(connectionSource, LockScreenImgBean.class, true);
+            onCreate(sqLiteDatabase, connectionSource);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

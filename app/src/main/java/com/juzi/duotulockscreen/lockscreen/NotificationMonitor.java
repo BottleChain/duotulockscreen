@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
-import com.juzi.duotulockscreen.util.GlobalConstantValues;
+import com.juzi.duotulockscreen.util.Values;
 import com.juzi.duotulockscreen.util.LogHelper;
 
 /**
@@ -60,7 +60,7 @@ public class NotificationMonitor extends NotificationListenerService {
         super.onCreate();
         LogHelper.i(TAG, "onCreate...");
         SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isLockScreen = sp1.getBoolean(GlobalConstantValues.KEY_SHARED_LOCKSCREEN, true);
+        boolean isLockScreen = sp1.getBoolean(Values.KEY_SHARED_LOCKSCREEN, true);
         if (isLockScreen) {
             Intent servie = new Intent(getBaseContext(), LockScreenService.class);
             servie.putExtra(LockScreenService.SERVICE_TYPE, 0);

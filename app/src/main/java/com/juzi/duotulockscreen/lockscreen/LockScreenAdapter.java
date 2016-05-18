@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.juzi.duotulockscreen.R;
+import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 
 import java.util.ArrayList;

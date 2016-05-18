@@ -8,9 +8,9 @@
     <string name="TAG_KEY_IS_FADEIN">TAG_KEY_IS_FADEIN</string>
     <string name="TAG_KEY_POSITION">TAG_KEY_POSITION</string>
 
-    <string name="pickimg_popup_count">(%1$s)</string>
+    <string name="pickimg_popup_dirname">%1$s  (%2$s)</string>
 
-    <string name="pickimg_next_count">下一步(%1$s/20)</string>
+    <string name="pickimg_next_count">下一步 (%1$s)</string>
 
     <string-array name="month_strings">
         <item>1月</item>

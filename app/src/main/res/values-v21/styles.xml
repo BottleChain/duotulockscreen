@@ -1,0 +1,60 @@
+<resources>
+
+    <style name="loading_progress" parent="@style/dialog">
+        <!--<item name="android:windowEnterAnimation">@null</item>-->
+        <!--<item name="android:windowExitAnimation">@null</item>-->
+        <!-- 背景昏暗 -->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="dialog" parent="@android:style/Theme.Material.Dialog">
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <!-- 背景昏暗 -->
+        <item name="android:backgroundDimEnabled">false</item>
+
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="My.Holo.Light.NoActionBar" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/main_bg</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="My.Holo.NoActionBar" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/main_bg_dark</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="My.Holo.Light.NoActionBar.Fullscreen" parent="android:Theme.Material.Light.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/main_bg</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="My.Holo.NoActionBar.Fullscreen" parent="android:Theme.Material.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/main_bg_dark</item>
+        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="My.Holo.Light.NoActionBar">
+        <!--<style name="AppTheme" parent="Theme.AppCompat.Light">-->
+        <!-- 加载此处会影响toast的显示，是toast不居中-->
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
 import com.juzi.duotulockscreen.R;
+import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.database.MyDatabaseHelper;
 import com.juzi.duotulockscreen.util.UmengEventIds;
 import com.umeng.analytics.MobclickAgent;

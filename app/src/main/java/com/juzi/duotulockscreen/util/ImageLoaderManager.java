@@ -49,6 +49,13 @@ public class ImageLoaderManager {
         ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), img);
     }
 
+    /**
+     * 加载本地大图，尽量的加载清楚的资源，因为要用来放大缩小来截取
+     */
+    public void loadOriLocalPic(String path, ImageView img, DisplayImageOptions options, ImageLoadingListener listener) {
+        ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), img, options, listener);
+    }
+
 	/**
 	 * 初始化Android-Universal-Image-Loader,只需要在应用启动时调用一次
 	 */
@@ -163,7 +170,7 @@ public class ImageLoaderManager {
                         boolean temp = !(tag != null && tag instanceof Boolean && !((Boolean) tag));
                         if (temp) {
                             img.setScaleType(ImageView.ScaleType.CENTER);
-                            img.setImageResource(R.drawable.ic_nopic);
+                            img.setImageResource(R.drawable.icon_nopic);
                         }
                     }
                 };

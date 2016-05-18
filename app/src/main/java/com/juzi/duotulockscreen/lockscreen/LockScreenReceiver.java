@@ -60,7 +60,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             }
             case Intent.ACTION_BOOT_COMPLETED: {// 开机启动
 //                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
-//                boolean isLockScreen = sp1.getBoolean(GlobalConstantValues.KEY_SHARED_LOCKSCREEN, false);
+//                boolean isLockScreen = sp1.getBoolean(Values.KEY_SHARED_LOCKSCREEN, false);
 //                if (!isLockScreen) {
 //                    return;
 //                }
@@ -72,7 +72,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 //            }
                 //            isStartService = true;
                 //            SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
-                //            boolean isLockScreen = sp1.getBoolean(GlobalConstantValues.KEY_SHARED_LOCKSCREEN, true);
+                //            boolean isLockScreen = sp1.getBoolean(Values.KEY_SHARED_LOCKSCREEN, true);
                 //            if (!isLockScreen) {
                 //                return;
                 //            }
@@ -112,7 +112,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             case ACTION_CONNECTIVITY_CHANGE: {
                 //网络链接改变的广播，用来在开机的时候调起服务，大部分手机开机都会发这个广播，并且不用开机启动的权限
 //                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
-//                boolean isLockScreen = sp1.getBoolean(GlobalConstantValues.KEY_SHARED_LOCKSCREEN, false);
+//                boolean isLockScreen = sp1.getBoolean(Values.KEY_SHARED_LOCKSCREEN, false);
 //                if (!isLockScreen) {
 //                    return;
 //                }

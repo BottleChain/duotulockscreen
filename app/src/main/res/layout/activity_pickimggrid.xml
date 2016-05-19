@@ -29,12 +29,12 @@
             <!--android:layout_height="match_parent"/>-->
 
         <TextView
-            android:id="@+id/bt_next"
+            android:id="@+id/bt_done"
             android:background="@drawable/click_selector_next_btn"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:text="完成"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:gravity="center"
             android:includeFontPadding="false"
             android:textColor="@color/bai"

@@ -76,7 +76,7 @@ public class ClipImgActivity extends BaseActivity implements View.OnClickListene
             ToastManager.showShort(this, "图片路径为空");
             return;
         } else {
-            mCutimgName = imgPrefix + path.substring(path.lastIndexOf("/"));
+            mCutimgName = imgPrefix + path.substring(path.lastIndexOf("/") + 1);
         }
         Log.d("wangzixu", "assignview path = " + path);
         mClipImageConverView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -123,6 +123,10 @@ public class ClipImgActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.tv_cancel: // 取消
+                setResult(RESULT_CANCELED);
+                onBackPressed();
+                break;
             case R.id.tv_confirm: //剪裁
                 final Dialog mLoadingProgress = new Dialog(this, R.style.loading_progress);
                 mLoadingProgress.setContentView(R.layout.loading_progressbar_clip);

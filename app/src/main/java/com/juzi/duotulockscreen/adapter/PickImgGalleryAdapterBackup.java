@@ -118,7 +118,7 @@ public class PickImgGalleryAdapterBackup extends BaseAdapter {
 
         public ViewHolder(View root) {
             mImageView = (ImageView) root.findViewById(R.id.iv_pickimage_item);
-            mIvChose = (ImageView) root.findViewById(R.id.iv_pickimg_chose);
+//            mIvChose = (ImageView) root.findViewById(R.id.iv_pickimg_chose);
             mShadow = root.findViewById(R.id.shadow);
         }
     }

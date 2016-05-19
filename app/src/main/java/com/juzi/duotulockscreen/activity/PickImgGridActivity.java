@@ -1,13 +1,16 @@
 package com.juzi.duotulockscreen.activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,19 +30,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.j256.ormlite.dao.Dao;
 import com.juzi.duotulockscreen.App;
 import com.juzi.duotulockscreen.R;
 import com.juzi.duotulockscreen.adapter.PickImgGalleryAdapter;
+import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.bean.PickImgBean;
+import com.juzi.duotulockscreen.database.MyDatabaseHelper;
+import com.juzi.duotulockscreen.util.FileUtil;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PickImgGridActivity extends BaseActivity implements View.OnClickListener, PickImgGalleryAdapter.OnCheckedImageCountChangeListener, AdapterView.OnItemClickListener {
+public class PickImgGridActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private GridView mGvGridview;
     private RelativeLayout mRlBottomBar;
     private TextView mTvPickimageBottomDirname;
@@ -60,6 +68,7 @@ public class PickImgGridActivity extends BaseActivity implements View.OnClickLis
     private TextView mTvNext;
     private Dialog mLoadingProgress;
     public static final int REQUEST_CODE_CLIPIMG = 101;
+    private Dao mFavoriteDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,20 +83,101 @@ public class PickImgGridActivity extends BaseActivity implements View.OnClickLis
     public void onBackPressed() {
         if (mPopWindow != null && mPopWindow.isShowing()) {
             disMissPop();
+        } else if (mCheckedImgs.size() > 0) {
+            if (mCheckedImgs.size() > 0) {
+                View cv = LayoutInflater.from(this).inflate(R.layout.exitsave_dialog_layout, null);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setView(cv)
+                        .setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (int i = 0; i < mCheckedImgs.size(); i++) {
+                                            PickImgBean pickImgBean = mCheckedImgs.get(i);
+                                            FileUtil.deleteFile(new File(pickImgBean.getImg_url_cuted()));
+                                        }
+                                    }
+                                }).start();
+                                PickImgGridActivity.super.onBackPressed();
+                                overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
+                            }
+                        }).setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                savaCutedImgToDB();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            } else {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < mCheckedImgs.size(); i++) {
+                            PickImgBean pickImgBean = mCheckedImgs.get(i);
+                            FileUtil.deleteFile(new File(pickImgBean.getImg_url_cuted()));
+                        }
+                    }
+                }).start();
+                super.onBackPressed();
+                overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
+            }
         } else {
             super.onBackPressed();
             overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
         }
     }
 
+    private void savaCutedImgToDB() {
+        final Dialog mLoadingProgress = new Dialog(this, R.style.loading_progress);
+        mLoadingProgress.setContentView(R.layout.loading_progressbar_save);
+        mLoadingProgress.setCancelable(false);
+        mLoadingProgress.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mFavoriteDao == null) {
+                        mFavoriteDao = MyDatabaseHelper.getInstance(PickImgGridActivity.this).getDaoQuickly(LockScreenImgBean.class);
+                    }
+                    for (int i = 0; i < mCheckedImgs.size(); i++) {
+                        PickImgBean pickImgBean = mCheckedImgs.get(i);
+                        LockScreenImgBean bean = new LockScreenImgBean();
+                        bean.setImg_url(pickImgBean.getImg_url_cuted());
+                        mFavoriteDao.create(bean);
+                    }
+                    mCheckedImgs.clear();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoadingProgress.dismiss();
+                        setResult(RESULT_OK);
+                        onBackPressed();
+                    }
+                });
+            }
+        }).start();
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.bt_next:
-
+            case R.id.bt_done: //注意保持已经截好的图到数据库
+                if (mCheckedImgs.size() > 0) {
+                   savaCutedImgToDB();
+                } else {
+                   onBackPressed();
+                }
                 break;
             case R.id.iv_back:
+                Log.d("wangzixu", "mCheckedImgs.size() = " + mCheckedImgs.size());
                 onBackPressed();
                 break;
             case R.id.shadow:
@@ -220,13 +310,10 @@ public class PickImgGridActivity extends BaseActivity implements View.OnClickLis
         mTvPickimageBottomDirname.setOnClickListener(this);
 
         findViewById(R.id.iv_back).setOnClickListener(this);
-
-        mTvNext = (TextView) findViewById(R.id.bt_next);
+        mTvNext = (TextView) findViewById(R.id.bt_done);
         mTvNext.setOnClickListener(this);
 
         mAdapter = new PickImgGalleryAdapter(this, mData, mCheckedImgs);
-        //mGvGridview.setAdapter(mAdapter);
-        mAdapter.setOnCheckedImageCountChangeListener(this);
     }
 
     private void disMissPop() {
@@ -259,11 +346,8 @@ public class PickImgGridActivity extends BaseActivity implements View.OnClickLis
         mRlPopContent.startAnimation(animation);
     }
 
-    @Override
-    public void onCheckedImageCountChange(int checkCount) {
-        mTvNext.setText(getResources().getString(R.string.pickimg_next_count, checkCount));
-    }
-
+    private View mCurrentClickView;
+    private PickImgBean mCurrentClickImgBean;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position == 0) {
@@ -276,9 +360,10 @@ public class PickImgGridActivity extends BaseActivity implements View.OnClickLis
 //            intent.putExtra(PickImgBigActivity.EXTRA_INIT_POSITION, position - 1);
 //            startActivityForResult(intent, 100);
 //            overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_retain);
-
+            mCurrentClickImgBean = mImgDirs.get(mCurrentDirPosition).get(position - 1);
+            mCurrentClickView = view;
             Intent intent = new Intent(this, ClipImgActivity.class);
-            intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mImgDirs.get(mCurrentDirPosition).get(position - 1).getImg_url());
+            intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mCurrentClickImgBean.getImg_url());
             intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_PREFIX, mImgPrefix);
             startActivityForResult(intent, REQUEST_CODE_CLIPIMG);
             overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
@@ -288,16 +373,26 @@ public class PickImgGridActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE_CLIPIMG) { //截图归来
+        if (requestCode == REQUEST_CODE_CLIPIMG) { //截图归来
+            if (resultCode == RESULT_OK) { //截图成功
                 String imgPath = data.getStringExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_DONE_PATH);
-
+                mCurrentClickImgBean.setImg_url_cuted(imgPath);
+                mCurrentClickView.findViewById(R.id.tv_pickimg_cuted).setVisibility(View.VISIBLE);
+                if (!mCheckedImgs.contains(mCurrentClickImgBean)) {
+                    mCheckedImgs.add(mCurrentClickImgBean);
+                }
+            } else { //取消或失败
+                mCurrentClickImgBean.setImg_url_cuted(null);
+                mCurrentClickView.findViewById(R.id.tv_pickimg_cuted).setVisibility(View.GONE);
+                if (mCheckedImgs.contains(mCurrentClickImgBean)) {
+                    mCheckedImgs.remove(mCurrentClickImgBean);
+                }
             }
+        }
 //            if (requestCode == 100) {
 //                mAdapter.updataCheckedItem(mHandler);
 //                onCheckedImageCountChange(mCheckedImgs.size());
 //            }
-        }
     }
 
     @Override

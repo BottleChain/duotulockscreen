@@ -47,16 +47,17 @@
             android:id="@+id/rl_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+                <!--android:verticalSpacing="1dp"-->
+                <!--android:horizontalSpacing="1dp"-->
             <GridView
                 android:id="@+id/gv_gridview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:listSelector="@android:color/transparent"
-                android:verticalSpacing="1dp"
-                android:horizontalSpacing="1dp"
                 android:numColumns="3"
                 android:gravity="center"
                 android:stretchMode="columnWidth"
+                android:layout_marginLeft="6dp"
                 />
             <include
                 android:visibility="gone"

@@ -62,9 +62,9 @@ public class ImageLoaderManager {
 	public static void initImageLoader(Context context) {
         //设置默认的desplayImageOptions
 		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-				.cacheInMemory(true)
+				.cacheInMemory(false)
 				.imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-				.cacheOnDisk(true)
+				.cacheOnDisk(false)
 				.build();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
@@ -93,8 +93,8 @@ public class ImageLoaderManager {
                                     ImageLoadingListener loadingListener, ImageLoadingProgressListener progressListener) {
         if (display_img_options == null) {
             display_img_options = new DisplayImageOptions.Builder()
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
+                    .cacheInMemory(false)
+                    .cacheOnDisk(false) //都是加载本地图片，不要缓存到硬盘
                     .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                     .build();
         }

@@ -58,20 +58,6 @@ public class LockScreensGalleryAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         boolean isShowFadiIn;
-//        if (getItemViewType(position) == 1) {
-//            if (convertView == null) {
-//                convertView =  View.inflate(mContext, R.layout.activity_mylockscreenimgs_grid_item_add, null);
-//                convertView.findViewById(R.id.ib_item_content).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        // TODO: 2016/2/17 点击添加图片
-//                        Intent intent = new Intent(mContext, PickImgGridActivity.class);
-//                        mContext.startActivity(intent);
-//                    }
-//                });
-//            }
-//            return convertView;
-//        }
 
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.activity_mylockscreenimgs_grid_item, null);
@@ -80,7 +66,8 @@ public class LockScreensGalleryAdapter extends BaseAdapter {
             isShowFadiIn = true;
         } else {
             holder = (ViewHolder) convertView.getTag();
-            isShowFadiIn = holder.oldPos != position;
+//            isShowFadiIn = holder.oldPos != position;
+            isShowFadiIn = true;
         }
 
         holder.oldPos = position;
@@ -88,6 +75,7 @@ public class LockScreensGalleryAdapter extends BaseAdapter {
 
         String url = mData.get(position).getImg_url();
 
+        ImageLoaderManager.getInstance().asyncLoadImage(holder.ivitemcontent, "file://" + url, mImgWidth, mImgHeight);
         ImageLoaderManager.getInstance().asyncLoadImage(holder.ivitemcontent, "file://" + url, mImgWidth, mImgHeight);
 //        ImageLoaderManager.getInstance().loadLocalPic(url, holder.ivitemcontent);
         return convertView;

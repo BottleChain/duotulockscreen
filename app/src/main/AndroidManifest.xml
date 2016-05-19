@@ -62,6 +62,12 @@
             android:screenOrientation="portrait" >
         </activity>
 
+        <activity
+            android:name=".activity.LockScreenBigImgActivity"
+            android:theme="@style/My.Holo.NoActionBar.Fullscreen"
+            android:screenOrientation="portrait" >
+        </activity>
+
         <receiver android:name=".lockscreen.LockScreenReceiver" >
             <intent-filter >
                 <category android:name="android.intent.category.LAUNCHER" />

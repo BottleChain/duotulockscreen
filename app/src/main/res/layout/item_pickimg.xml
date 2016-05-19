@@ -11,22 +11,23 @@
         android:layout_height="@dimen/pickimg_grid_img_height"
         android:scaleType="centerCrop"/>
 
-    <View
-        android:visibility="gone"
-        android:id="@+id/shadow"
-        android:background="@color/hei_50"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/pickimg_grid_img_height"
-        />
+    <!--<View-->
+        <!--android:visibility="gone"-->
+        <!--android:id="@+id/shadow"-->
+        <!--android:background="@color/hei_50"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/pickimg_grid_img_height"-->
+        <!--/>-->
 
-    <ImageView
-        android:id="@+id/iv_pickimg_chose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/selector_ivchose_bg"
-        android:layout_alignParentRight="true"
-        android:paddingBottom="25dp"
-        android:paddingLeft="25dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"/>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv_pickimg_cuted"
+        android:text="已选取"
+        android:textColor="@color/bai"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:background="@color/hei_60"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        />
 </RelativeLayout>

@@ -2,9 +2,10 @@
     <dimen name="left_drawer_itemh">51dp</dimen>
     <dimen name="actionbar_h">48dp</dimen>
 
-    <dimen name="grid_img_height">212dp</dimen>
-    <dimen name="grid_img_width">119dp</dimen>
-
+    <dimen name="grid_img_height">199dp</dimen>
+    <dimen name="grid_img_width">112dp</dimen>
+    <!--<dimen name="grid_img_height">212dp</dimen>-->
+    <!--<dimen name="grid_img_width">119dp</dimen>-->
     <dimen name="pickimg_grid_img_height">120dp</dimen>
     <dimen name="pickimg_grid_img_width">120dp</dimen>
 

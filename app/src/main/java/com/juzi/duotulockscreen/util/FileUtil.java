@@ -134,13 +134,14 @@ public class FileUtil {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        Log.e("wangzixu", "picName = " + picName);
         //deleteContents(dir);
         boolean success = savaBitmapToDir(context, dir, destBitmap, picName);
         if (success) {
             File f = new File(dir, picName);
             return f.getAbsolutePath();
         } else {
-            ToastManager.showShort(context, "保存失败，请检查空间是否足够");
+            Log.e("wangzixu", "保存失败，请检查空间是否足够");
             return "";
         }
     }

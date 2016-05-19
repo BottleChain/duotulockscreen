@@ -33,7 +33,7 @@
         android:textSize="18sp"/>
 
     <Button
-        android:id="@+id/bt_next"
+        android:id="@+id/bt_done"
         android:text="下一步(0/20)"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"

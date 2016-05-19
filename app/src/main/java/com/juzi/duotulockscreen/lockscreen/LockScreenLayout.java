@@ -138,7 +138,7 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
             if (mIsFirstLoad) {
                 mIsFirstLoad = false;
                 if (mAdapter.getCount() > 1) {
-                    mViewpager.setCurrentItem(mLockScreenImgBeans.size() * 10000 - 1);
+                    mViewpager.setCurrentItem(mLockScreenImgBeans.size() * 10000);
                 } else {
                     mViewpager.setCurrentItem(0);
                 }

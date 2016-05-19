@@ -2,9 +2,11 @@ package com.juzi.duotulockscreen.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.view.Gravity;
@@ -20,10 +22,13 @@ import com.juzi.duotulockscreen.adapter.LockScreensGalleryAdapter;
 import com.juzi.duotulockscreen.bean.LockScreenImgBean;
 import com.juzi.duotulockscreen.database.MyDatabaseHelper;
 import com.juzi.duotulockscreen.lockscreen.LockScreenService;
+import com.juzi.duotulockscreen.util.FileUtil;
+import com.juzi.duotulockscreen.util.ImageUtil;
 import com.juzi.duotulockscreen.util.ToastManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +50,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private Handler mHandler = new Handler();
     private Dialog mLoadingProgress;
     private View mLayoutNoContent;
+    private int REQUEST_CODE_ADDIMG = 100;
+    private int REQUEST_CODE_DELETEIMG = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +140,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         mGridView = (GridView) findViewById(R.id.gv_gridview);
         mGridView.setOnItemClickListener(this);
+
         mGridView.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), false, true, new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -156,6 +164,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private long mLastBackTime = 0;
     @Override
     public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawers();
+            return;
+        }
         long currentTime = SystemClock.uptimeMillis();
         if (currentTime - mLastBackTime > 2000) {
             mLastBackTime = currentTime;
@@ -180,7 +192,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     mDrawerLayout.closeDrawers();
                 } else {
                     Intent intent = new Intent(MainActivity.this, PickImgGridActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, REQUEST_CODE_ADDIMG);
                     overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 }
                 break;
@@ -190,10 +202,65 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_ADDIMG) {
+                mCurrentPage = 0;
+                mData.clear();
+                loadData();
+
+                Intent intent = new Intent(MainActivity.this, LockScreenService.class);
+                intent.putExtra(LockScreenService.SERVICE_TYPE, 3);
+                startService(intent);
+            } else if (requestCode == REQUEST_CODE_DELETEIMG) {
+                int pos = data.getIntExtra(LockScreenBigImgActivity.IMAGE_POSITION, -1);
+                if (pos != -1) { //删除指定位置条目
+                    final LockScreenImgBean bean = mData.remove(pos);
+                    mAdapter.notifyDataSetChanged();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Dao dao = MyDatabaseHelper.getInstance(MainActivity.this).getDaoQuickly(LockScreenImgBean.class);
+                                dao.delete(bean);
+                                FileUtil.deleteFile(new File(bean.getImg_url()));
+                                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+//                                boolean isLockScreen = sp1.getBoolean(Values.KEY_PREFERENCE_LOCKSCREEN, false);
+//                                if (isLockScreen) {
+//                                }
+                                Intent intent = new Intent(MainActivity.this, LockScreenService.class);
+                                intent.putExtra(LockScreenService.SERVICE_TYPE, 3);
+                                startService(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                    if (mAdapter.getCount() <= 0) {
+                        mLayoutNoContent.setVisibility(View.VISIBLE);
+                        mGridView.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        if (position == mData.size()) {
-//            Intent intent = new Intent(this, PickImgGridActivity.class);
-//            startActivity(intent);
-//        }
+        ImageView img = (ImageView) view.findViewById(R.id.iv_item_content);
+        if (img == null) {
+            return;
+        }
+
+        Intent intent = new Intent(this, LockScreenBigImgActivity.class);
+        LockScreenBigImgActivity.sPreviewDrawable = img.getDrawable().getConstantState().newDrawable();
+
+        intent.putExtra(LockScreenBigImgActivity.IMAGE_POSITION, position);
+        intent.putExtra(LockScreenBigImgActivity.IMAGE_PATH, mData.get(position).getImg_url());
+
+        ImageUtil.changeLight(img, true); //图片点击变暗
+        startActivityForResult(intent, REQUEST_CODE_DELETEIMG);
+        overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_retain);
     }
 }

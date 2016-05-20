@@ -191,7 +191,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
                     mDrawerLayout.closeDrawers();
                 } else {
-                    Intent intent = new Intent(MainActivity.this, PickImgGridActivity.class);
+                    Intent intent = new Intent(MainActivity.this, PickImgOutOfOrderActivity.class);
                     startActivityForResult(intent, REQUEST_CODE_ADDIMG);
                     overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/iv_pick_girdimg"
+        android:src="@drawable/icon_nopic"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/mask"
+        android:text="已选取"
+        android:textColor="@color/bai"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:background="@color/hei_70"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>

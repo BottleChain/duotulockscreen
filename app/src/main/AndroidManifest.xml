@@ -46,7 +46,7 @@
         </activity>
 
         <activity
-            android:name=".activity.PickImgGridActivity"
+            android:name=".activity.PickImgOutOfOrderActivity"
             android:theme="@style/My.Holo.Light.NoActionBar"
             android:screenOrientation="portrait" >
         </activity>

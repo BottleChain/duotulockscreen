@@ -63,10 +63,10 @@ public class PickImgOutOfOrderAdapter extends BaseAdapter {
             View mask = content.findViewById(R.id.mask);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(bean.getItemWidth(), bean.getItemHeigh());
             lp.leftMargin = bean.getMarginLeft();
-//            Log.d("wangzixu", "getView pos acturlItemW,H = " + position
-//                    + ", " + bean.getItemWidth()
-//                    + ", " + bean.getItemHeigh()
-//                    + ", " + bean.getMarginLeft());
+    //            Log.d("wangzixu", "getView pos acturlItemW,H = " + position
+    //                    + ", " + bean.getItemWidth()
+    //                    + ", " + bean.getItemHeigh()
+    //                    + ", " + bean.getMarginLeft());
             content.setLayoutParams(lp);
             content.setTag(bean);
             content.setId(R.id.rl_pick_girdimg);

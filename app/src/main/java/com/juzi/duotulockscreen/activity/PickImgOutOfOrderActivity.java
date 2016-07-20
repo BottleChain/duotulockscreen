@@ -1,16 +1,22 @@
 package com.juzi.duotulockscreen.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.TextUtils;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,9 +25,9 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -33,15 +39,15 @@ import android.widget.Toast;
 import com.j256.ormlite.dao.Dao;
 import com.juzi.duotulockscreen.App;
 import com.juzi.duotulockscreen.R;
-import com.juzi.duotulockscreen.adapter.PickImgOutOfOrderAdapter;
-import com.juzi.duotulockscreen.bean.DemoImgBean;
+import com.juzi.duotulockscreen.adapter.PickImgGridAdapter;
 import com.juzi.duotulockscreen.bean.LockScreenImgBean;
+import com.juzi.duotulockscreen.bean.PickImgBean;
 import com.juzi.duotulockscreen.database.MyDatabaseHelper;
 import com.juzi.duotulockscreen.util.CommonUtil;
 import com.juzi.duotulockscreen.util.FileUtil;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 import com.juzi.duotulockscreen.util.ImageUtil;
-import com.juzi.duotulockscreen.util.ImgAndTagWallManager;
+import com.juzi.duotulockscreen.util.Values;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
@@ -50,32 +56,38 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnClickListener {
+public class PickImgGridActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+    private GridView mGvGridview;
     private RelativeLayout mRlBottomBar;
     private TextView mTvPickimageBottomDirname;
-    private ArrayList<DemoImgBean> mCheckedImgs = new ArrayList<>();
+    private ArrayList<ArrayList<PickImgBean>> mImgDirs = new ArrayList<>();
+    private ArrayList<PickImgBean> mData = new ArrayList<>();
+    private ArrayList<PickImgBean> mCheckedImgs = new ArrayList<>();
     private Handler mHandler = new Handler();
     private PopupWindow mPopWindow;
     private int mCurrentDirPosition = 0;
-    private ArrayList<ArrayList<DemoImgBean>> mImgDirs = new ArrayList<>();
     /**
      * 读取手机中所有图片资源的url
      */
     final static Uri LOCAL_IMAGE_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-    private PickImgOutOfOrderAdapter mAdapter;
+    private PickImgGridAdapter mAdapter;
     private View mPopBg;
     private ListView mPopLv;
     private View mRlPopContent;
-    private TextView mTvNext;
+    private TextView mTvDone;
     private Dialog mLoadingProgress;
     public static final int REQUEST_CODE_CLIPIMG = 101;
+    public static final int REQUEST_CODE_CAMERA = 102;
+    public static final int REQUEST_CODE_PERMISSION_CAMERA = 103;
     private Dao mFavoriteDao;
-    private ListView mListView;
+    private String mImgFromCameraPath;
+    private Uri mImgFromCameraUri;
+    private BaseAdapter mPopupListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pickimg_outoforder);
+        setContentView(R.layout.activity_pickimg_grid);
         assignViews();
 
         loadData();
@@ -87,7 +99,7 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
             disMissPop();
         } else if (mCheckedImgs.size() > 0) {
             if (mCheckedImgs.size() > 0) {
-                View cv = LayoutInflater.from(this).inflate(R.layout.exitsave_dialog_layout, null);
+                View cv = LayoutInflater.from(this).inflate(R.layout.dialog_layout_exitsava, null);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this)
                         .setTitle("提示")
                         .setView(cv)
@@ -98,12 +110,12 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
                                     @Override
                                     public void run() {
                                         for (int i = 0; i < mCheckedImgs.size(); i++) {
-                                            DemoImgBean demoImgBean = mCheckedImgs.get(i);
-                                            FileUtil.deleteFile(new File(demoImgBean.getImg_url_cuted()));
+                                            PickImgBean pickImgBean = mCheckedImgs.get(i);
+                                            FileUtil.deleteFile(new File(pickImgBean.getImg_url_cliped()));
                                         }
                                     }
                                 }).start();
-                                PickImgOutOfOrderActivity.super.onBackPressed();
+                                PickImgGridActivity.super.onBackPressed();
                                 overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
                             }
                         }).setPositiveButton("保存", new DialogInterface.OnClickListener() {
@@ -119,8 +131,8 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
                     @Override
                     public void run() {
                         for (int i = 0; i < mCheckedImgs.size(); i++) {
-                            DemoImgBean demoImgBean = mCheckedImgs.get(i);
-                            FileUtil.deleteFile(new File(demoImgBean.getImg_url_cuted()));
+                            PickImgBean pickImgBean = mCheckedImgs.get(i);
+                            FileUtil.deleteFile(new File(pickImgBean.getImg_url_cliped()));
                         }
                     }
                 }).start();
@@ -143,12 +155,12 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
             public void run() {
                 try {
                     if (mFavoriteDao == null) {
-                        mFavoriteDao = MyDatabaseHelper.getInstance(PickImgOutOfOrderActivity.this).getDaoQuickly(LockScreenImgBean.class);
+                        mFavoriteDao = MyDatabaseHelper.getInstance(PickImgGridActivity.this).getDaoQuickly(LockScreenImgBean.class);
                     }
                     for (int i = 0; i < mCheckedImgs.size(); i++) {
-                        DemoImgBean demoImgBean = mCheckedImgs.get(i);
+                        PickImgBean pickImgBean = mCheckedImgs.get(i);
                         LockScreenImgBean bean = new LockScreenImgBean();
-                        bean.setImg_url(demoImgBean.getImg_url_cuted());
+                        bean.setImg_url(pickImgBean.getImg_url_cliped());
                         mFavoriteDao.create(bean);
                     }
                     mCheckedImgs.clear();
@@ -174,21 +186,6 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         }
         int id = v.getId();
         switch (id) {
-            case R.id.rl_pick_girdimg:
-                ImageUtil.changeLight((ImageView) v.findViewById(R.id.iv_pick_girdimg), true); //图片点击变暗
-                Object tag = v.getTag(); //说明是照相机
-                if (tag == null) {
-
-                } else {
-                    mCurrentClickImgBean = (DemoImgBean)tag;
-                    mCurrentClickView = v;
-                    Intent intent = new Intent(this, ClipImgActivity.class);
-                    intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mCurrentClickImgBean.getImg_url());
-                    intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_PREFIX, mImgPrefix);
-                    startActivityForResult(intent, REQUEST_CODE_CLIPIMG);
-                    overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
-                }
-                break;
             case R.id.bt_done: //注意保持已经截好的图到数据库
                 if (mCheckedImgs.size() > 0) {
                    savaCutedImgToDB();
@@ -230,11 +227,11 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
             mPopBg = content.findViewById(R.id.shadow);
             mPopBg.setOnClickListener(this);
 
-            Adapter ada = new PopupListAdapter();
-            mPopLv.setAdapter((ListAdapter) ada);
+            mPopupListAdapter = new PopupListAdapter();
+            mPopLv.setAdapter((ListAdapter) mPopupListAdapter);
             mPopLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mPopWindow.dismiss();
                     if (mCurrentDirPosition == position) {
                         return;
@@ -242,26 +239,9 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
                     mCurrentDirPosition = position;
                     ViewHolder holder = (ViewHolder) view.getTag();
                     mTvPickimageBottomDirname.setText(holder.textviewgallerypickimgpopitemname.getText());
-                    mAdapter.setItems(null);
+                    mAdapter.setData(mImgDirs.get(position));
+                    mAdapter.setType(position == 0 ? 0 : 1);
                     mAdapter.notifyDataSetChanged();
-
-                    mLoadingProgress.show();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ImgAndTagWallManager wallManager = ImgAndTagWallManager.getInstance(PickImgOutOfOrderActivity.this);
-                            final ArrayList<ArrayList<DemoImgBean>> items = new ArrayList<ArrayList<DemoImgBean>>();
-                            wallManager.initItemsForListView(items, mImgDirs.get(position));
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.setItems(items);
-                                    mLoadingProgress.dismiss();
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    }).start();
                 }
             });
 
@@ -281,64 +261,46 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ContentResolver contentResolver = PickImgOutOfOrderActivity.this.getContentResolver();
+                ContentResolver contentResolver = PickImgGridActivity.this.getContentResolver();
                 Cursor mCursor = contentResolver.query(LOCAL_IMAGE_URI, null, MediaStore.Images.Media.MIME_TYPE + "=? or "
                         + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED
                         + " DESC");
                 if (mCursor == null) {
                     mLoadingProgress.dismiss();
-                    Toast.makeText(PickImgOutOfOrderActivity.this, "读取图片失败！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PickImgGridActivity.this, "读取图片失败！", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                HashMap<String, ArrayList<DemoImgBean>> tempMap = new HashMap<>();
-                ArrayList<DemoImgBean> mData = new ArrayList<>();
+                HashMap<String, ArrayList<PickImgBean>> mImgDirsMap = new HashMap<>();
                 try {
                     while (mCursor.moveToNext()) {
-                        DemoImgBean bean = new DemoImgBean();
+                        PickImgBean bean = new PickImgBean();
                         // 获取图片路径
                         String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                        String w = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.WIDTH));
-                        String h = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.HEIGHT));
-                        if (TextUtils.isEmpty(w) || TextUtils.isEmpty(h)
-                                || Integer.valueOf(w) <= 0
-                                || Integer.valueOf(h) <= 0) {
-                            continue;
-                        }
-                        Log.d("wangzixu", "loadData w,h = " + w + ", " + h);
-                        bean.setWidth(Integer.valueOf(w));
-                        bean.setHeight(Integer.valueOf(h));
                         bean.setImg_url(path);
                         mData.add(bean);
 
                         // 获取父文件夹路径
                         String parentName = new File(path).getParentFile().getName();
-                        if (tempMap.containsKey(parentName)) {
-                            tempMap.get(parentName).add(bean);
+                        if (mImgDirsMap.containsKey(parentName)) {
+                            mImgDirsMap.get(parentName).add(bean);
                         } else {
-                            ArrayList<DemoImgBean> list = new ArrayList<>();
+                            ArrayList<PickImgBean> list = new ArrayList<>();
                             list.add(bean);
-                            tempMap.put(parentName, list);
+                            mImgDirsMap.put(parentName, list);
                             mImgDirs.add(list);
                         }
                     }
                     mImgDirs.add(0, mData);
                 } finally {
-                    tempMap.clear();
                     mCursor.close();
                 }
-                ImgAndTagWallManager wallManager = ImgAndTagWallManager.getInstance(PickImgOutOfOrderActivity.this);
-                final ArrayList<ArrayList<DemoImgBean>> items = new ArrayList<ArrayList<DemoImgBean>>();
-                wallManager.initItemsForListView(items, mData);
-
-                final int datasize = mData.size();
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
 //                        mAdapter.notifyDataSetChanged();
-                        mTvPickimageBottomDirname.setText(String.format(getString(R.string.pickimg_popup_dirname), "所有图片", datasize));
-                        mAdapter = new PickImgOutOfOrderAdapter(PickImgOutOfOrderActivity.this, items, mCheckedImgs);
-                        mListView.setAdapter(mAdapter);
+                        mTvPickimageBottomDirname.setText(String.format(getString(R.string.pickimg_popup_dirname), "所有图片", mData.size()));
+                        mGvGridview.setAdapter(mAdapter);
                         mLoadingProgress.dismiss();
                     }
                 });
@@ -354,9 +316,10 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         mLoadingProgress.show();
 
         mImgPrefix = String.valueOf(System.currentTimeMillis() / 1000);
-
-        mListView = (ListView) findViewById(R.id.listView);
-        mListView.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), false, true));
+        mGvGridview = (GridView) findViewById(R.id.gv_gridview);
+        //fing的时候暂停加载图片
+        mGvGridview.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), false, true));
+        mGvGridview.setOnItemClickListener(this);
 
         mRlBottomBar = (RelativeLayout) findViewById(R.id.rl_bottom_bar);
         //mRlBottomBar.setOnClickListener(this);
@@ -364,8 +327,9 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         mTvPickimageBottomDirname.setOnClickListener(this);
 
         findViewById(R.id.iv_back).setOnClickListener(this);
-        mTvNext = (TextView) findViewById(R.id.bt_done);
-        mTvNext.setOnClickListener(this);
+        mTvDone = (TextView) findViewById(R.id.bt_done);
+
+        mAdapter = new PickImgGridAdapter(this, mData, mCheckedImgs);
     }
 
     private void disMissPop() {
@@ -399,29 +363,125 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
     }
 
     private View mCurrentClickView;
-    private DemoImgBean mCurrentClickImgBean;
+    private PickImgBean mCurrentClickImgBean;
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ImageUtil.changeLight((ImageView)view.findViewById(R.id.iv_pickimage_item), true); //图片点击变暗
+        if (mAdapter.getType() == 0) {
+            if (position == 0) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    //需要用权限的地方之前，检查是否有某个权限
+                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(PickImgGridActivity.this, Manifest.permission.CAMERA);
+                    Log.d("wangzixu", "checkCallPhonePermission = " + checkCallPhonePermission);
+    //                if(checkCallPhonePermission == PackageManager.PERMISSION_DENIED){
+    //                    askToOpenCamera();
+    //                } else
+                    if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(PickImgGridActivity.this,new String[]{Manifest.permission.CAMERA},REQUEST_CODE_PERMISSION_CAMERA);
+                    }else{
+                        getImgFromCamera();
+                    }
+                } else {
+                    getImgFromCamera();;
+                }
+            } else {
+                mCurrentClickImgBean = mImgDirs.get(mCurrentDirPosition).get(position - 1);
+                mCurrentClickView = view;
+                Intent intent = new Intent(this, ClipImgActivity.class);
+                intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mCurrentClickImgBean.getImg_url());
+                intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_PREFIX, mImgPrefix);
+                startActivityForResult(intent, REQUEST_CODE_CLIPIMG);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+            }
+        } else {
+            mCurrentClickImgBean = mImgDirs.get(mCurrentDirPosition).get(position);
+            mCurrentClickView = view;
+            Intent intent = new Intent(this, ClipImgActivity.class);
+            intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mCurrentClickImgBean.getImg_url());
+            intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_PREFIX, mImgPrefix);
+            startActivityForResult(intent, REQUEST_CODE_CLIPIMG);
+            overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+        }
+    }
 
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        if (position == 0) {
-//
-//        } else {
-////            App app = (App) getApplication();
-////            app.setBigImgData(mImgDirs.get(mCurrentDirPosition));
-////            app.setCheckedImgs(mCheckedImgs);
-////            Intent intent = new Intent(this, PickImgBigActivity.class);
-////            intent.putExtra(PickImgBigActivity.EXTRA_INIT_POSITION, position - 1);
-////            startActivityForResult(intent, 100);
-////            overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_retain);
-//
-//            mCurrentClickImgBean = mImgDirs.get(mCurrentDirPosition).get(position - 1);
-//            mCurrentClickView = view;
-//            Intent intent = new Intent(this, ClipImgActivity.class);
-//            intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mCurrentClickImgBean.getImg_url());
-//            intent.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_PREFIX, mImgPrefix);
-//            startActivityForResult(intent, REQUEST_CODE_CLIPIMG);
-//            overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
-//        }
-//    }
+    private boolean getImgFromCamera() {
+        String status= Environment.getExternalStorageState();
+        boolean result = false;
+        if(status.equals(Environment.MEDIA_MOUNTED)) {
+            try {
+                File dir=new File(Environment.getExternalStorageDirectory() + Values.CAMERA_DIR_TEMP);
+                if(!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                Intent intent=new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                File f = new File(dir, getImgFileName());
+                mImgFromCameraPath = f.getAbsolutePath();
+                mImgFromCameraUri = Uri.fromFile(f);
+                //intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgFromCameraUri);
+                startActivityForResult(intent, REQUEST_CODE_CAMERA);
+                result = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "启动相机失败", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "请检查存储空间是否可用", Toast.LENGTH_SHORT).show();
+        }
+        return result;
+    }
+
+    private String getImgFileName() {
+        return new StringBuilder("HAOKAN_IMG_").append(System.currentTimeMillis()).append(".jpeg").toString();
+    }
+
+    //用户行为的回调，用户拒绝或者同意了授权的回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_CAMERA:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //用户点击了同意
+                    getImgFromCamera();
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    askToOpenCamera();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    /**
+     * 提示用户去设置界面开启相机权限
+     */
+    private void askToOpenCamera() {
+        View cv = LayoutInflater.from(this).inflate(R.layout.dialog_layout_askcamera, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("权限申请")
+                .setView(cv)
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -429,23 +489,44 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         if (requestCode == REQUEST_CODE_CLIPIMG) { //截图归来
             if (resultCode == RESULT_OK) { //截图成功
                 String imgPath = data.getStringExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_DONE_PATH);
-                mCurrentClickImgBean.setImg_url_cuted(imgPath);
+                mCurrentClickImgBean.setImg_url_cliped(imgPath);
                 mCurrentClickView.findViewById(R.id.mask).setVisibility(View.VISIBLE);
                 if (!mCheckedImgs.contains(mCurrentClickImgBean)) {
                     mCheckedImgs.add(mCurrentClickImgBean);
                 }
             } else { //取消或失败
-                mCurrentClickImgBean.setImg_url_cuted(null);
+                mCurrentClickImgBean.setImg_url_cliped(null);
                 mCurrentClickView.findViewById(R.id.mask).setVisibility(View.GONE);
                 if (mCheckedImgs.contains(mCurrentClickImgBean)) {
                     mCheckedImgs.remove(mCurrentClickImgBean);
                 }
             }
+            if (mCheckedImgs.size() > 0) {
+                mTvDone.setOnClickListener(this);
+            } else {
+                mTvDone.setOnClickListener(null);
+            }
+        } else if (requestCode == REQUEST_CODE_CAMERA) { //拍照归来
+            File f = new File(mImgFromCameraPath);
+            if (f.exists()) {
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                intent.setData(Uri.fromFile(f));
+                sendBroadcast(intent); //通知系统有张新拍的照片
+
+                PickImgBean bean = new PickImgBean();
+                bean.setImg_url(mImgFromCameraPath);
+                mData.add(0, bean);
+                mAdapter.notifyDataSetChanged();
+
+                mCurrentClickImgBean = bean;
+                mCurrentClickView = mAdapter.getItem1();
+                Intent intent1 = new Intent(this, ClipImgActivity.class);
+                intent1.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_SRC_PATH, mCurrentClickImgBean.getImg_url());
+                intent1.putExtra(ClipImgActivity.KEY_INTENT_CLIPIMG_PREFIX, mImgPrefix);
+                startActivityForResult(intent1, REQUEST_CODE_CLIPIMG);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+            }
         }
-//            if (requestCode == 100) {
-//                mAdapter.updataCheckedItem(mHandler);
-//                onCheckedImageCountChange(mCheckedImgs.size());
-//            }
     }
 
     @Override
@@ -460,39 +541,47 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         private int mItemWidth = 0, mItemHeight = 0;
 
         public PopupListAdapter() {
-            mItemWidth = PickImgOutOfOrderActivity.this.getResources().getDimensionPixelSize(R.dimen.pickimg_popup_icon_width);
-            mItemHeight = PickImgOutOfOrderActivity.this.getResources().getDimensionPixelSize(R.dimen.pickimg_popup_icon_height);
+            mItemWidth = PickImgGridActivity.this.getResources().getDimensionPixelSize(R.dimen.pickimg_popup_icon_width);
+            mItemHeight = PickImgGridActivity.this.getResources().getDimensionPixelSize(R.dimen.pickimg_popup_icon_height);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
+            boolean shouldInitBitmap;
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.item_pickimg_popup_chossefolder, null);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
+                shouldInitBitmap = true;
             } else {
                 holder = (ViewHolder) convertView.getTag();
+                shouldInitBitmap = holder.position != position;
             }
 
-            ArrayList<DemoImgBean> lists = mImgDirs.get(position);
-            int size = lists.size();
-            DemoImgBean first = lists.get(0);
+            holder.position = position;
+
+            ArrayList<PickImgBean> list = mImgDirs.get(position);
+            PickImgBean first = list.get(0);
             final String path = first.getImg_url();
 
-            // 加载左侧icon图片
-            ImageLoaderManager.getInstance().asyncLoadImage(holder.imageviewgallerypickimgpopitem, "file://" + path, mItemWidth, mItemHeight);
+            if (shouldInitBitmap) {
+                holder.imageviewgallerypickimgpopitem.setImageBitmap(null);
+            }
+
+            ImageLoaderManager.getInstance().displayImage("file://" + path
+                    , holder.imageviewgallerypickimgpopitem, mItemWidth, mItemHeight, true);
 
             // 数量
 //            holder.textviewgallerypickimgpopitemcount.setText(String.format(getString(R.string.pickimg_popup_count), "所有图片", list.size()));
 
             // 文件夹名称
             if (position == 0) {
-                holder.textviewgallerypickimgpopitemname.setText(String.format(getString(R.string.pickimg_popup_dirname), "所有图片", size));
+                holder.textviewgallerypickimgpopitemname.setText(String.format(getString(R.string.pickimg_popup_dirname), "所有图片", list.size()));
             } else {
                 String parentPath = new File(path).getParentFile().getName();
                 String title = parentPath.substring(parentPath.lastIndexOf("/") + 1);
-                holder.textviewgallerypickimgpopitemname.setText(String.format(getString(R.string.pickimg_popup_dirname), title, size));
+                holder.textviewgallerypickimgpopitemname.setText(String.format(getString(R.string.pickimg_popup_dirname), title, list.size()));
             }
 
             // 是否显示选中框
@@ -527,6 +616,7 @@ public class PickImgOutOfOrderActivity extends BaseActivity implements View.OnCl
         //public final TextView textviewgallerypickimgpopitemcount;
         public final ImageView imagegallerypickimgpopitemcheck;
         public final View root;
+        public int position;
 
         public ViewHolder(View root) {
             imageviewgallerypickimgpopitembg = (ImageView) root.findViewById(R.id.imageview_gallery_pickimg_pop_item_bg);

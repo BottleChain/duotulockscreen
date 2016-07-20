@@ -1,35 +1,25 @@
 package com.juzi.duotulockscreen.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.DecelerateInterpolator;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.juzi.duotulockscreen.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.nostra13.universalimageloader.core.assist.ViewScaleType;
-import com.nostra13.universalimageloader.core.download.ImageDownloader;
-import com.nostra13.universalimageloader.core.imageaware.NonViewAware;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 public class ImageLoaderManager {
     public static final String TAG = "ImageLoaderManager ";
     private static ImageLoaderManager sInstance;
     private ImageLoaderManager(){}
-
-    private DisplayImageOptions display_img_options;
-
-    public static final int IMAGE_LOAD_DURATION = 200;
-    public static DecelerateInterpolator sInterpolator = new DecelerateInterpolator();
+    public static final int IMAGE_FADEIN_DURATION = 200;
+    private DisplayImageOptions mDisplay_options_circle; //用来显示圆角图片的options
+    private DisplayImageOptions mDisplay_options_fadein; //用来渐隐进入效果显示图片的options
 
     /**
      * 单例
@@ -45,145 +35,94 @@ public class ImageLoaderManager {
         return sInstance;
     }
 
-    public void loadLocalPic(String path, ImageView img) {
-        ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), img);
+    /**
+     * 初始化Android-Universal-Image-Loader,只需要在应用启动时调用一次
+     */
+    public static void initImageLoader(Context context) {
+        //设置默认的desplayImageOptions
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+                .cacheOnDisk(true)
+                .build();
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+//				.writeDebugLogs() //是否打印加载图片过程的log，调试时使用
+                .defaultDisplayImageOptions(defaultOptions)
+                .threadPriority(Thread.NORM_PRIORITY)// 设置线程的优先级
+//				.denyCacheImageMultipleSizesInMemory()// 当同一个Uri获取不同大小的图片，缓存到内存时，只缓存一个。默认会缓存多个不同的大小的相同图片
+                .diskCacheSize(200 * 1024 * 1024) //设置硬盘缓存大小，默认是大小无限制的
+//				.memoryCacheSizePercentage(25) //设置内存缓存大小位1/4，默认是应用分配内存的 1/8
+                .threadPoolSize(4) // 线程池数量
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .build();
+
+        ImageLoader.getInstance().init(config); // 全局初始化此配置
     }
 
     /**
-     * 加载本地大图，尽量的加载清楚的资源，因为要用来放大缩小来截取
+     * 加载圆角图片，需要传入特殊的opitions
+     * @param img
+     * @param imageUrl
+     * @param cornerRadiusPixels 圆角半径
+     * @param marginPixels 图片bitmap到imageview控件边缘的宽度
      */
-    public void loadOriLocalPic(String path, ImageView img, DisplayImageOptions options, ImageLoadingListener listener) {
-        ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), img, options, listener);
-    }
-
-	/**
-	 * 初始化Android-Universal-Image-Loader,只需要在应用启动时调用一次
-	 */
-	public static void initImageLoader(Context context) {
-        //设置默认的desplayImageOptions
-		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-				.cacheInMemory(false)
-				.imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-				.cacheOnDisk(false)
-				.build();
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-				.writeDebugLogs() //是否打印加载图片过程的log，调试时使用
-				.defaultDisplayImageOptions(defaultOptions)
-				.threadPriority(Thread.NORM_PRIORITY)// 设置线程的优先级
-				.denyCacheImageMultipleSizesInMemory()// 当同一个Uri获取不同大小的图片，缓存到内存时，只缓存一个。默认会缓存多个不同的大小的相同图片
-				.diskCacheSize(200 * 1024 * 1024) //设置硬盘缓存大小，默认是大小无限制的
-				.memoryCacheSizePercentage(25) //设置内存缓存大小位1/4，默认是应用分配内存的 1/8
-				.threadPoolSize(5) // 线程池数量
-                .tasksProcessingOrder(QueueProcessingType.FIFO)
-				.build();
-
-		ImageLoader.getInstance().init(config); // 全局初始化此配置
-	}
-
-    public void loadThumbnailFromWeb(String uri, NonViewAware viewAware,
-                                     ImageLoadingListener loadingListener, ImageLoadingProgressListener progressListener) {
-        loadThumbnailFromWeb(uri, viewAware, null, loadingListener, progressListener);
-    }
-
-	/**
-	 * 使用方法前务必确保img的宽高已经被赋值，否则会使用屏幕宽高,使用imageAware，因为其中可以填充宽高
-	 */
-	public void loadThumbnailFromWeb(String uri, NonViewAware viewAware, DisplayImageOptions options,
-                                    ImageLoadingListener loadingListener, ImageLoadingProgressListener progressListener) {
-        if (display_img_options == null) {
-            display_img_options = new DisplayImageOptions.Builder()
-                    .cacheInMemory(false)
-                    .cacheOnDisk(false) //都是加载本地图片，不要缓存到硬盘
+    public void asyncLoadCircleImage(final ImageView img, String imageUrl, int cornerRadiusPixels, int marginPixels
+            , final int width, final int heigh) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return;
+        }
+        if (mDisplay_options_circle == null) {
+            mDisplay_options_circle = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .displayer(new RoundedBitmapDisplayer(cornerRadiusPixels, marginPixels))
                     .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                     .build();
         }
-        if (options == null) {
-            options = display_img_options;
-        }
-
-        try {
-            ImageLoader.getInstance().displayImage(uri, viewAware, options, loadingListener, progressListener);
-        } catch(Exception e) {
-            LogHelper.i(TAG, "loadThumbnailFromWeb something wrongm, uri = " + uri);
-            e.printStackTrace();
-        }
-	}
-
-    public static class ImgHolder {
-        private NonViewAware imgAware;
-        //用来设置图片开始加载和结束加载时监听器，复用这个监听器，不用每次都new
-        public SimpleImageLoadingListener simpleImageLoadingListener;
-        public ImageLoadingProgressListener imageLoadingProgressListener;
-        public AlphaAnimation fadeImage;
-
-        public ImgHolder(int imgWidth, int imgHeigh) {
-            imgAware = new NonViewAware(null, new ImageSize(imgWidth,imgHeigh), ViewScaleType.CROP);
-            fadeImage = new AlphaAnimation(0, 1);
-            fadeImage.setDuration(IMAGE_LOAD_DURATION);
-            fadeImage.setInterpolator(sInterpolator);
-        }
-    }
-
-    public void asyncLoadImage(final ImageView img, String imageUrl, int width, int heigh) {
-        asyncLoadImage(img, imageUrl, width, heigh, null, null, null);
-    }
-
-    public void asyncLoadImage(final ImageView img, String imageUrl, int width, int heigh
-            , SimpleImageLoadingListener simpleImageLoadingListener
-            , ImageLoadingProgressListener imageLoadingProgressListener
-            , final ImageView.ScaleType scaleType) {
-        if (imageUrl == null) {
-            return;
-        }
-
-        String imgUrl = imageUrl.trim();
-        ImgHolder holder;
-
-        if (img.getTag(R.string.TAG_KEY_IMG_HOLDER) == null) {
-            holder = new ImageLoaderManager.ImgHolder(width,heigh);
-            if (simpleImageLoadingListener != null) {
-                holder.simpleImageLoadingListener = simpleImageLoadingListener;
-            } else {
-                final AlphaAnimation fadeImage = holder.fadeImage;
-                holder.simpleImageLoadingListener = new SimpleImageLoadingListener() {
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        if (scaleType != null) {
-                            img.setScaleType(scaleType);
-                        } else {
-                            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        }
-                        img.setImageBitmap(loadedImage);
-
-
-                        Object tag = img.getTag(R.string.TAG_KEY_IS_FADEIN); //是否应该显示渐进动画，由各个img自己控制
-                        boolean temp = !(tag != null && tag instanceof Boolean && !((Boolean) tag));
-                        if (temp) {
-                            img.clearAnimation();
-                            img.startAnimation(fadeImage);
-                        }
-                    }
-                    @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-                        Object tag = img.getTag(R.string.TAG_KEY_IS_FADEIN); //是否应该显示渐进动画，由各个img自己控制
-                        boolean temp = !(tag != null && tag instanceof Boolean && !((Boolean) tag));
-                        if (temp) {
-                            img.setScaleType(ImageView.ScaleType.CENTER);
-                            img.setImageResource(R.drawable.icon_nopic);
-                        }
-                    }
-                };
+        ImageLoader.getInstance().displayImage(imageUrl, new ImageViewAware(img){
+            @Override
+            public int getWidth() {
+                return width;
             }
 
-            if (imageLoadingProgressListener != null) {
-                holder.imageLoadingProgressListener = imageLoadingProgressListener;
+            @Override
+            public int getHeight() {
+                return heigh;
+            }
+        }, mDisplay_options_circle);
+    }
+
+    /**
+     * 加载图片的封装，原装ImageLoader没有可以传宽高的的方法，并且如果要fadein需要新的options
+     * 如果使用其不传宽高的的api，前面的图片会获取到宽高为0，然后框架会使用反射获取maxWidth和maxHeight，
+     * 多了反射逻辑，而且是使用默认的最大宽高，即屏幕宽高，在加载小图片时会浪费资源，所以自己穿宽高会好一些
+     * gridview加载图片是，positon=0的位置会加载许多次，用没有宽高的api更显浪费
+     * @param imageUrl
+     * @param imageView
+     * @param width
+     * @param heigh
+     * @param fadeIn 是否显示渐入动画，只有网络图片才有动画
+     */
+    public void displayImage(String imageUrl, ImageView imageView, final int width, final int heigh, boolean fadeIn) {
+        if (mDisplay_options_fadein == null) {
+            mDisplay_options_fadein = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .displayer(new FadeInBitmapDisplayer(IMAGE_FADEIN_DURATION, true, false, false))
+                    .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+                    .build();
+        }
+        ImageLoader.getInstance().displayImage(imageUrl, new ImageViewAware(imageView) {
+            @Override
+            public int getWidth() {
+                return width;
             }
 
-            img.setTag(R.string.TAG_KEY_IMG_HOLDER, holder);
-        } else {
-            holder = (ImgHolder) img.getTag(R.string.TAG_KEY_IMG_HOLDER);
-        }
-        loadThumbnailFromWeb(imgUrl, holder.imgAware, holder.simpleImageLoadingListener, holder.imageLoadingProgressListener);
+            @Override
+            public int getHeight() {
+                return heigh;
+            }
+        }, fadeIn ? mDisplay_options_fadein : null);
     }
 }

@@ -7,7 +7,7 @@ public class LogHelper {
 
     public static void i(String TAG, String msg) {
         if (DEBUG) {
-            Log.i(TAG, msg);
+            Log.d("wangzixu", msg);
         }
     }
 

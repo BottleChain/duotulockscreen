@@ -21,7 +21,18 @@ public class LockScreenImgBean {
     private int img_index;
 
     @DatabaseField
+    private long insert_time;
+
+    @DatabaseField
     private int isDeflaut; //用户没有添加锁屏图片时，用默认的图片，此值为1，其他的都是0
+
+    public long getInsert_time() {
+        return insert_time;
+    }
+
+    public void setInsert_time(long insert_time) {
+        this.insert_time = insert_time;
+    }
 
     public int getIsDeflaut() {
         return isDeflaut;

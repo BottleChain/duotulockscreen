@@ -1,6 +1,5 @@
 package com.juzi.duotulockscreen.lockscreen;
 
-import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -25,8 +24,6 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
      */
     public static final String SERVICE_TYPE = "service_type";
     private LockScreenReceiver mReceiver;
-    private KeyguardManager.KeyguardLock mKeyguardLock;
-    private KeyguardManager mKeyguardManager;
     private WindowManager.LayoutParams mParams;
     // 创建浮动窗口设置布局参数的对象
     private WindowManager mWindowManager;
@@ -54,23 +51,22 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
         filter.addAction(Intent.ACTION_SCREEN_OFF);
 //        filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
 //        filter.addAction(Intent.ACTION_BOOT_COMPLETED);
+//        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.addAction(Intent.ACTION_TIME_TICK); //每分钟一次的更新时间
-        filter.addAction(LockScreenReceiver.ACTION_ALARM_ALERT);
+        filter.addAction(LockScreenReceiver.ACTION_ALARM_ALERT); //关于闹钟来了要解锁
         filter.addAction(LockScreenReceiver.ACTION_ALARM_DONE);
         filter.addAction(LockScreenReceiver.ACTION_ALARM_DISMISS);
         filter.addAction(LockScreenReceiver.ACTION_ALARM_SNOOZE);
-//        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.setPriority(Integer.MAX_VALUE);
 
         mReceiver = new LockScreenReceiver();
         registerReceiver(mReceiver, filter);
-
         LogHelper.i("LockscreenService", "onCreate --");
 
+        //电话来了要解锁
         TelephonyManager telephony = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(new PhoneStateListener() {
             boolean isLockCalling;
-
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 switch (state) {
@@ -78,7 +74,7 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
                         isCalling = false;
                         if (isLockCalling) {
                             // 在锁屏下，来电到挂断启动锁屏;
-                            showLockView();
+                            showLockView(false);
                         }
                         break;
                     case TelephonyManager.CALL_STATE_RINGING: // 来电
@@ -95,10 +91,9 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
             }
         }, PhoneStateListener.LISTEN_CALL_STATE);
 
-        mKeyguardManager = (KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-        mKeyguardLock = mKeyguardManager.newKeyguardLock("");
-        mKeyguardLock.disableKeyguard();
-
+//        mKeyguardManager = (KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+//        mKeyguardLock = mKeyguardManager.newKeyguardLock("");
+//        mKeyguardLock.disableKeyguard();
 //        Dao dao;
 //        try {
 //            dao = MyDatabaseHelper.getInstance(getBaseContext()).getDaoQuickly(LockScreenImgBean.class);
@@ -126,10 +121,10 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
 //            e.printStackTrace();
 //        }
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //保证进程不被杀的一个通知监听器
-            Intent notify = new Intent(getBaseContext(), NotificationMonitor.class);
-            startService(notify);
-        }
+//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //保证进程不被杀的一个通知监听器
+//            Intent notify = new Intent(getBaseContext(), NotificationMonitor.class);
+//            startService(notify);
+//        }
     }
 
     @Override
@@ -141,8 +136,11 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
             int type = intent.getIntExtra(SERVICE_TYPE, 0);
             LogHelper.i("LockscreenService", "onStartCommand is called! type = " + type);
             switch (type) {
-                case 1: //锁屏
-                    showLockView();
+                case 10: //锁屏，并且切换到下一张
+                    showLockView(true);
+                    break;
+                case 1: //锁屏，不切换到下一张
+                    showLockView(false);
                     break;
                 case 2: //解锁
                     disMissLockView();
@@ -172,7 +170,7 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
         mLockScreenLayout.initData();
     }
 
-    public void showLockView() {
+    public void showLockView(boolean next) {
 //        if (mKeyguardLock == null) {
 //            mKeyguardManager = (KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
 //            mKeyguardLock = mKeyguardManager.newKeyguardLock("");
@@ -184,16 +182,21 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
         mLockScreenLayout.setVisibility(View.VISIBLE);
         mLockScreenLayout.offScreen();
 
+        if (next) {
+            mLockScreenLayout.showNextImg();
+        }
+
         if (isLock) {
              //如果已经锁了 ，则换图
-            mLockScreenLayout.showNextImg();
+//            mLockScreenLayout.showNextImg();
         } else {
             if (mLockScreenLayout.getParent() != null) {
                 mWindowManager.removeView(mLockScreenLayout);
             }
-            mLockScreenLayout.showNextImg();
             mWindowManager.addView(mLockScreenLayout, mParams);
         }
+
+
         Intent intent = new Intent(getBaseContext(), LockScreenNullActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("startType", 1);
@@ -205,7 +208,6 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
         if (isLock) {
             mWindowManager.removeView(mLockScreenLayout);
             //needShowNext = true;
-
             //开启nullActivity，强制解锁系统锁屏
             Intent intent1 = new Intent(getBaseContext(), LockScreenNullActivity.class);
             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -219,12 +221,6 @@ public class LockScreenService extends Service implements LockView.onUnLockListe
     @Override
     public void onDestroy() {
         unregisterReceiver(mReceiver);
-        if (mKeyguardLock != null) {
-            mKeyguardLock.reenableKeyguard();
-        }
-//        if(mIntent!=null){
-//            startService(mIntent);
-//        }
     }
 
     private void initWindowView() {

@@ -30,19 +30,23 @@
 
         <TextView
             android:id="@+id/bt_done"
-            android:background="@drawable/click_selector_next_btn"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:text="完成"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:textColor="@color/bai"
+            android:textColor="@color/click_selector_textcolor_bai"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="13dp"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="27dp"/>
+            android:layout_height="match_parent"/>
+
+        <View
+            android:layout_toLeftOf="@id/bt_done"
+            android:layout_centerVertical="true"
+            android:background="@color/bai_60"
+            android:layout_width="1px"
+            android:layout_height="13dp"/>
     </RelativeLayout>
 
     <GridView
@@ -50,8 +54,8 @@
         android:id="@+id/gv_gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:horizontalSpacing="1dp"
-        android:verticalSpacing="1dp"
+        android:horizontalSpacing="3dp"
+        android:verticalSpacing="3dp"
         android:listSelector="@null"
         android:numColumns="3"
         android:stretchMode="columnWidth">

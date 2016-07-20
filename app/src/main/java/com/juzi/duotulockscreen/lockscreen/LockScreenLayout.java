@@ -22,6 +22,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,9 +63,7 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
     private View mRlBottom;
 
     public LockScreenLayout(Context context) {
-        super(context);
-        inflate(getContext(), R.layout.lockscreeen_layout, this);
-        assignViews();
+        this(context, null);
     }
 
     public LockScreenLayout(Context context, AttributeSet attrs) {
@@ -110,7 +109,7 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
         try {
             Dao dao = MyDatabaseHelper.getInstance(getContext()).getDaoQuickly(LockScreenImgBean.class);
             List list = dao.queryForAll();
-
+            Collections.reverse(list); //倒序
 //            if (list == null || list.size() == 0) {
 //                if (mLockScreenImgBeans.size() > 0) {
 //                    mLockScreenImgBeans.clear();
@@ -135,14 +134,14 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
             }
 
             mAdapter.notifyDataSetChanged();
-            if (mIsFirstLoad) {
-                mIsFirstLoad = false;
-                if (mAdapter.getCount() > 1) {
-                    mViewpager.setCurrentItem(mLockScreenImgBeans.size() * 10000);
-                } else {
-                    mViewpager.setCurrentItem(0);
-                }
+            if (mAdapter.getCount() > 1) {
+                mViewpager.setCurrentItem(mLockScreenImgBeans.size() * 10000 - 1);
+            } else {
+                mViewpager.setCurrentItem(0);
             }
+//            if (mIsFirstLoad) {
+//                mIsFirstLoad = false;
+//            }
 //            mTitle.setText(mLockScreenImgBeans.get(mViewpager.getCurrentItem() % mLockScreenImgBeans.size()).getImg_title());
 //            mTvDescription.setText(mLockScreenImgBeans.get(mViewpager.getCurrentItem() % mLockScreenImgBeans.size()).getImg_desc());
         } catch (SQLException e) {
@@ -187,7 +186,7 @@ public class LockScreenLayout extends RelativeLayout implements ViewPager.OnPage
             MobclickAgent.onEvent(getContext(), UmengEventIds.event_lockscreen_image_show);
         }
 
-        mViewpager.postDelayed(new Runnable() {
+        postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (mIsDisMissIconUnlock) {

@@ -58,7 +58,7 @@
             android:background="@color/bai_50"
             android:layout_centerInParent="true"
             android:layout_width="1px"
-            android:layout_height="22dp"/>
+            android:layout_height="15dp"/>
 
         <TextView
             android:id="@+id/tv_cancel"

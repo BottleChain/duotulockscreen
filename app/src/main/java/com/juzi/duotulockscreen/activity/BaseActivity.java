@@ -8,7 +8,6 @@ import android.view.WindowManager;
 
 import com.juzi.duotulockscreen.R;
 import com.juzi.duotulockscreen.util.SystemBarTintManager;
-import com.umeng.analytics.MobclickAgent;
 
 public class BaseActivity extends FragmentActivity {
     protected SystemBarTintManager mSystemBarTintManager;
@@ -48,12 +47,12 @@ public class BaseActivity extends FragmentActivity {
 
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this); //友盟统计基础
+        //MobclickAgent.onResume(this); //友盟统计基础
     }
 
     protected void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this); //友盟统计基础
+        //MobclickAgent.onPause(this); //友盟统计基础
     }
 
     @Override

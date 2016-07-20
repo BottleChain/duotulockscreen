@@ -8,7 +8,8 @@ import android.widget.ImageView;
 
 import com.juzi.duotulockscreen.R;
 import com.juzi.duotulockscreen.bean.LockScreenImgBean;
-import com.juzi.duotulockscreen.util.ImageLoaderManager;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import java.util.ArrayList;
 
@@ -56,7 +57,7 @@ public class LockScreenAdapter extends PagerAdapter {
         }
         container.addView(lockView);
         if (bean.getIsDeflaut() == 0) {
-            ImageLoaderManager.getInstance().loadLocalPic(bean.getImg_url(), lockView);
+            ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(bean.getImg_url()), lockView);
         } else {
             lockView.setImageResource(R.drawable.wallpaper_default);
         }

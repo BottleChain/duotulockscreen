@@ -26,10 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+            <!--android:background="?android:attr/selectableItemBackgroundBorderless"-->
         <ImageView
             android:id="@+id/iv_add"
-            android:layout_alignParentRight="true"
             android:background="@drawable/click_selector_actionbar_bg"
+            android:layout_alignParentRight="true"
             android:paddingLeft="18dp"
             android:paddingRight="18dp"
             android:scaleType="center"
@@ -49,22 +50,28 @@
             android:layout_height="match_parent">
                 <!--android:verticalSpacing="1dp"-->
                 <!--android:horizontalSpacing="1dp"-->
-            <GridView
-                android:id="@+id/gv_gridview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:listSelector="@android:color/transparent"
-                android:numColumns="3"
-                android:gravity="center"
-                android:stretchMode="columnWidth"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_container"
                 android:layout_marginLeft="6dp"
-                />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+                <GridView
+                    android:id="@+id/gv_gridview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:listSelector="@android:color/transparent"
+                    android:numColumns="3"
+                    android:gravity="center"
+                    android:stretchMode="columnWidth"
+                    />
+            </android.support.v4.widget.SwipeRefreshLayout>
             <include
                 android:visibility="gone"
                 android:id="@+id/layout_nocontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 layout="@layout/layout_nocontent"/>
+
             <RelativeLayout
                 android:id="@+id/rl_edit_bottom_bar"
                 android:layout_width="match_parent"

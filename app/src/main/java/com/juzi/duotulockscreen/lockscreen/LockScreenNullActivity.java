@@ -24,7 +24,6 @@ public class LockScreenNullActivity extends BaseActivity {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         //window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-
         View v = new View(this);
         v.setBackgroundColor(Color.TRANSPARENT);
         v.setOnTouchListener(new View.OnTouchListener() {

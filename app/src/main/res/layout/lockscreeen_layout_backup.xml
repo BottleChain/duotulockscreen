@@ -95,7 +95,7 @@
             android:textColor="@color/bai"
             android:textSize="56sp" />
 
-        <!--style="@style/shadowText"-->
+            <!--style="@style/shadowText"-->
         <ImageView
             android:id="@+id/tv_time3"
             android:layout_marginTop="27dp"
@@ -133,7 +133,7 @@
             android:includeFontPadding="false"
             android:textColor="@color/bai"
             android:textSize="56sp" />
-        <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_marginTop="2dp"-->
 
         <TextView
             android:id="@+id/tv_date"
@@ -147,7 +147,7 @@
             android:textColor="@color/bai"
             android:text="2018年5月20/星期二"
             android:textSize="14sp" />
-        <!--android:layout_marginBottom="80dp"-->
+            <!--android:layout_marginBottom="80dp"-->
 
         <ImageView
             android:layout_marginTop="30dp"

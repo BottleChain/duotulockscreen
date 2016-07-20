@@ -18,13 +18,14 @@ import android.widget.TextView;
 
 import com.juzi.duotulockscreen.R;
 import com.juzi.duotulockscreen.util.FileUtil;
-import com.juzi.duotulockscreen.util.ImageLoaderManager;
 import com.juzi.duotulockscreen.util.ToastManager;
 import com.juzi.duotulockscreen.view.ClipConveredView;
 import com.juzi.duotulockscreen.view.ZoomImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class ClipImgActivity extends BaseActivity implements View.OnClickListener {
@@ -61,7 +62,7 @@ public class ClipImgActivity extends BaseActivity implements View.OnClickListene
             public void run() {
                 mLoadingProgress.dismiss();
             }
-        }, 300);
+        }, 400);
 
         mClipImageSrcImage = (ZoomImageView) findViewById(R.id.clip_image_src_image);
         mTvCancel = (TextView) findViewById(R.id.tv_cancel);
@@ -87,11 +88,11 @@ public class ClipImgActivity extends BaseActivity implements View.OnClickListene
                 mClipImageSrcImage.setClipRect(new RectF(clipRect));
                 mClipImageSrcImage.setEdgeRect(mClipImageSrcImage.getClipRect());
                 mClipImageSrcImage.setMaxMinScale(4.0f, .01f);
-                ImageLoaderManager.getInstance().loadOriLocalPic(path, mClipImageSrcImage,
+                ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), mClipImageSrcImage,
                         new DisplayImageOptions.Builder()
-                                .cacheInMemory(true)
+                                .cacheInMemory(false)
                                 .cacheOnDisk(false)
-                                .imageScaleType(ImageScaleType.NONE_SAFE)
+                                .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                                 .build(),
                         new ImageLoadingListener() {
                     @Override

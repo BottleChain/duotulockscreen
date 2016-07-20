@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.juzi.duotulockscreen.bean.PickImgBean;
-import com.juzi.duotulockscreen.util.ImageLoaderManager;
 import com.juzi.duotulockscreen.view.ZoomImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class PickImgBigImgViewPagerAdapter extends PagerAdapter {
         container.addView(imageView);
 
         final String path = imageViewBean.getImg_url();
-        ImageLoaderManager.getInstance().loadLocalPic(path, imageView);
+        ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), imageView);
         return imageView;
     }
 }

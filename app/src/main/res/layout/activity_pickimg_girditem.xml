@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/pickimg_grid_img_height"
                 android:gravity="center" >
 
     <ImageView
         android:id="@+id/iv_pickimage_item"
         android:layout_width="match_parent"
-        android:src="@drawable/icon_nopic"
+        android:background="@drawable/icon_nopic"
         android:layout_height="@dimen/pickimg_grid_img_height"
         android:scaleType="centerCrop"/>
-
     <!--<View-->
         <!--android:visibility="gone"-->
         <!--android:id="@+id/shadow"-->
@@ -21,13 +20,13 @@
 
     <TextView
         android:visibility="gone"
-        android:id="@+id/tv_pickimg_cuted"
+        android:id="@+id/mask"
         android:text="已选取"
         android:textColor="@color/bai"
-        android:textSize="14sp"
+        android:textSize="15sp"
         android:gravity="center"
-        android:background="@color/hei_60"
+        android:background="@color/hei_70"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/pickimg_grid_img_height"
         />
 </RelativeLayout>

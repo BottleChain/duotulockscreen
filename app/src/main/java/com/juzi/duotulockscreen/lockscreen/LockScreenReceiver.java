@@ -3,8 +3,11 @@ package com.juzi.duotulockscreen.lockscreen;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.juzi.duotulockscreen.util.LogHelper;
+import com.juzi.duotulockscreen.util.Values;
 
 public class LockScreenReceiver extends BroadcastReceiver {
     static final String SYSTEM_DIALOG_REASON_KEY = "reason";
@@ -41,7 +44,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             case Intent.ACTION_SCREEN_OFF:
                 if (!LockScreenService.isCalling) { //来电话期间不锁屏
                     Intent i = new Intent(context, LockScreenService.class);
-                    i.putExtra(LockScreenService.SERVICE_TYPE, 1); //锁屏type
+                    i.putExtra(LockScreenService.SERVICE_TYPE, 10); //锁屏type
                     context.startService(i);
                 }
                 break;
@@ -51,45 +54,13 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 context.startService(servie);
                 break;
             }
-            case ACTION_ALARM_ALERT: { //开始时钟定时响铃，解锁----
-                isLockAlarmRing = LockScreenService.isLock;
-                Intent servie = new Intent(context, LockScreenService.class);
-                servie.putExtra(LockScreenService.SERVICE_TYPE, 2); //解锁type
-                context.startService(servie);
-                break;
-            }
-            case Intent.ACTION_BOOT_COMPLETED: {// 开机启动
-//                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
-//                boolean isLockScreen = sp1.getBoolean(Values.KEY_PREFERENCE_LOCKSCREEN, false);
-//                if (!isLockScreen) {
-//                    return;
-//                }
-                Intent servie = new Intent(context, LockScreenService.class);
-                servie.putExtra(LockScreenService.SERVICE_TYPE, 0);
-                context.startService(servie);
-                //            if (isStartService) {
-                //                return;
-                //            }
-                //            isStartService = true;
-                //            SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
-                //            boolean isLockScreen = sp1.getBoolean(Values.KEY_PREFERENCE_LOCKSCREEN, true);
-                //            if (!isLockScreen) {
-                //                return;
-                //            }
-                //            Intent lock = new Intent(context, LockScreenService.class);
-                //            Dao dao;
-                //            try {
-                //                dao = MyDatabaseHelper.getInstance(context).getDaoQuickly(LockScreenImgBean.class);
-                //                final List list = dao.queryForAll();
-                //                if (list != null && list.size() > 0) {
-                //                    lock.putExtra(LockScreenService.SERVICE_TYPE, 5); //至少有一张锁屏图片，并且锁屏
-                //                } else {
-                //                    lock.putExtra(LockScreenService.SERVICE_TYPE, 6); //没有一张图片
-                //                }
-                //            } catch (SQLException e) {
-                //                e.printStackTrace();
-                //            }
-                //            context.startService(lock);
+            case ACTION_ALARM_ALERT: { //开始定时响铃，解锁----
+                if (LockScreenService.isLock) {
+                    isLockAlarmRing = true;
+                    Intent servie = new Intent(context, LockScreenService.class);
+                    servie.putExtra(LockScreenService.SERVICE_TYPE, 2); //解锁type
+                    context.startService(servie);
+                }
                 break;
             }
             case ACTION_ALARM_DONE:
@@ -102,20 +73,33 @@ public class LockScreenReceiver extends BroadcastReceiver {
                     context.startService(servie);
                 }
                 break;
+            case Intent.ACTION_BOOT_COMPLETED: {// 开机启动
+                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean isLockScreen = sp1.getBoolean(Values.KEY_PREFERENCE_LOCKSCREEN, false);
+                if (!isLockScreen) {
+                    return;
+                }
+                Intent servie = new Intent(context, LockScreenService.class);
+                servie.putExtra(LockScreenService.SERVICE_TYPE, 0);
+                context.startService(servie);
+                break;
+            }
             case Intent.ACTION_TIME_TICK: {
                 // 改变系统时间
-                Intent servie = new Intent(context, LockScreenService.class);
-                servie.putExtra(LockScreenService.SERVICE_TYPE, 4); //改变时间type
-                context.startService(servie);
+                if (LockScreenService.isLock) {
+                    Intent servie = new Intent(context, LockScreenService.class);
+                    servie.putExtra(LockScreenService.SERVICE_TYPE, 4); //改变时间type
+                    context.startService(servie);
+                }
                 break;
             }
             case ACTION_CONNECTIVITY_CHANGE: {
                 //网络链接改变的广播，用来在开机的时候调起服务，大部分手机开机都会发这个广播，并且不用开机启动的权限
-//                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
-//                boolean isLockScreen = sp1.getBoolean(Values.KEY_PREFERENCE_LOCKSCREEN, false);
-//                if (!isLockScreen) {
-//                    return;
-//                }
+                SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean isLockScreen = sp1.getBoolean(Values.KEY_PREFERENCE_LOCKSCREEN, false);
+                if (!isLockScreen) {
+                    return;
+                }
                 Intent servie = new Intent(context, LockScreenService.class);
                 servie.putExtra(LockScreenService.SERVICE_TYPE, 0);
                 context.startService(servie);

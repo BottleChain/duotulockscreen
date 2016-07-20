@@ -1,6 +1,7 @@
 package com.juzi.duotulockscreen.adapter;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -57,27 +58,26 @@ public class LockScreensGalleryAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
-        boolean isShowFadiIn;
+        boolean shouldInitBitmap;
 
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.activity_mylockscreenimgs_grid_item, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-            isShowFadiIn = true;
+            shouldInitBitmap = true;
         } else {
             holder = (ViewHolder) convertView.getTag();
-//            isShowFadiIn = holder.oldPos != position;
-            isShowFadiIn = true;
+            shouldInitBitmap = holder.oldPos != position;
         }
 
         holder.oldPos = position;
-        holder.ivitemcontent.setTag(R.string.TAG_KEY_IS_FADEIN, isShowFadiIn);
 
         String url = mData.get(position).getImg_url();
-
-        ImageLoaderManager.getInstance().asyncLoadImage(holder.ivitemcontent, "file://" + url, mImgWidth, mImgHeight);
-        ImageLoaderManager.getInstance().asyncLoadImage(holder.ivitemcontent, "file://" + url, mImgWidth, mImgHeight);
-//        ImageLoaderManager.getInstance().loadLocalPic(url, holder.ivitemcontent);
+        if (shouldInitBitmap) {
+            holder.ivitemcontent.setImageBitmap(null);
+        }
+        ImageLoaderManager.getInstance().displayImage("file://" + url, holder.ivitemcontent
+                , mImgWidth, mImgHeight, true);
         return convertView;
     }
 
@@ -90,5 +90,9 @@ public class LockScreensGalleryAdapter extends BaseAdapter {
             ivitemcontent = (ImageView) root.findViewById(R.id.iv_item_content);
             this.root = root;
         }
+    }
+
+    public Point getItemWH() {
+        return new Point(mImgWidth, mImgHeight);
     }
 }

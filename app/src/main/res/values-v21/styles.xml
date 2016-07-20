@@ -32,6 +32,7 @@
     <!-- Base application theme. -->
     <style name="My.Holo.Light.NoActionBar" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/main_bg</item>
+        <item name="android:windowContentTransitions">true</item>
         <!--<item name="android:colorBackground">@null</item>-->
     </style>
 
@@ -46,8 +47,8 @@
     </style>
 
     <style name="My.Holo.NoActionBar.Fullscreen" parent="android:Theme.Material.NoActionBar.Fullscreen">
-        <item name="android:windowBackground">@color/main_bg_dark</item>
-        <!--<item name="android:colorBackground">@null</item>-->
+        <!--<item name="android:windowBackground">@color/main_bg_dark</item>-->
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <!-- Application theme. -->

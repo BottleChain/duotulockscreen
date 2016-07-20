@@ -61,7 +61,15 @@
 
     <style name="My.Holo.NoActionBar.Fullscreen" parent="android:Theme.Holo.NoActionBar.Fullscreen">
         <item name="android:windowBackground">@color/main_bg_dark</item>
-        <!--<item name="android:colorBackground">@null</item>-->
+    </style>
+
+    <style name="MyTransitionAnimTheme" parent="android:Theme.Holo.NoActionBar.Fullscreen">
+        <!--<item name="android:windowBackground">@color/main_bg_dark</item>-->
+        <!--背景透明-->
+        <!--无进入动画-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
     <style name="shadowText">

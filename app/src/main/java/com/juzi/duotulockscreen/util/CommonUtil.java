@@ -12,7 +12,7 @@ public class CommonUtil {
     private static long sLastClickTime;
     public static boolean isQuickClick() {
         long time = SystemClock.uptimeMillis();
-        if ( time - sLastClickTime < 300) {
+        if ( time - sLastClickTime < 350) {
             return true;
         }
         sLastClickTime = time;

@@ -18,7 +18,7 @@ import android.widget.PopupWindow;
 import com.juzi.duotulockscreen.App;
 import com.juzi.duotulockscreen.R;
 import com.juzi.duotulockscreen.adapter.PickImgBigImgViewPagerAdapter;
-import com.juzi.duotulockscreen.bean.DemoImgBean;
+import com.juzi.duotulockscreen.bean.PickImgBean;
 import com.juzi.duotulockscreen.view.ZoomImageView;
 import com.juzi.duotulockscreen.view.ZoomImageViewPager;
 
@@ -32,8 +32,8 @@ public class PickImgBigActivity extends BaseActivity implements View.OnClickList
     private Handler mHandler = new Handler();
     private View mTopBar;
     private ImageView mIvTopChosed;
-    private ArrayList<DemoImgBean> mData;
-    private ArrayList<DemoImgBean> mCheckedImgs;
+    private ArrayList<PickImgBean> mData;
+    private ArrayList<PickImgBean> mCheckedImgs;
     private PopupWindow mPopupWindow;
     private boolean mChangedChose;
 
@@ -118,7 +118,7 @@ public class PickImgBigActivity extends BaseActivity implements View.OnClickList
         });
     }
 
-    private DemoImgBean mCurrentBean;
+    private PickImgBean mCurrentBean;
     private void handleItem(int position) {
         int viewPosition = position % mViewsList.size();
         ZoomImageView imgView = mViewsList.get(viewPosition);

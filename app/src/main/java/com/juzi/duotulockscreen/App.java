@@ -2,7 +2,7 @@ package com.juzi.duotulockscreen;
 
 import android.app.Application;
 
-import com.juzi.duotulockscreen.bean.DemoImgBean;
+import com.juzi.duotulockscreen.bean.PickImgBean;
 import com.juzi.duotulockscreen.util.ImageLoaderManager;
 
 import java.util.ArrayList;
@@ -20,22 +20,22 @@ public class App extends Application {
     //所以用app来做为了中转，持有了数据集合的引用。
     //目前为了方便，所有跳转到大图预览的activity负责给这个data赋值，大图activity直接从这取就可以，
     // 注意！！！--- 给这个data赋值的activity在销毁时一定负责置空此引用，减少不必要的内存开销
-    private ArrayList<DemoImgBean> mBigImgData;
-    private ArrayList<DemoImgBean> mCheckedImgs;
+    private ArrayList<PickImgBean> mBigImgData;
+    private ArrayList<PickImgBean> mCheckedImgs;
 
-    public ArrayList<DemoImgBean> getBigImgData() {
+    public ArrayList<PickImgBean> getBigImgData() {
         return mBigImgData;
     }
 
-    public void setBigImgData(ArrayList<DemoImgBean> bigImgData) {
+    public void setBigImgData(ArrayList<PickImgBean> bigImgData) {
         mBigImgData = bigImgData;
     }
 
-    public ArrayList<DemoImgBean> getCheckedImgs() {
+    public ArrayList<PickImgBean> getCheckedImgs() {
         return mCheckedImgs;
     }
 
-    public void setCheckedImgs(ArrayList<DemoImgBean> checkedImgs) {
+    public void setCheckedImgs(ArrayList<PickImgBean> checkedImgs) {
         mCheckedImgs = checkedImgs;
     }
 }

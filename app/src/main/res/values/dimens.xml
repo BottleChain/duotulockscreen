@@ -2,14 +2,14 @@
     <dimen name="left_drawer_itemh">70dp</dimen>
     <dimen name="actionbar_h">48dp</dimen>
 
-    <dimen name="pickimg_grid_dividerW">3dp</dimen>
-
     <dimen name="grid_img_height">199dp</dimen>
     <dimen name="grid_img_width">112dp</dimen>
     <!--<dimen name="grid_img_height">212dp</dimen>-->
     <!--<dimen name="grid_img_width">119dp</dimen>-->
     <dimen name="pickimg_grid_img_height">118dp</dimen>
-    <dimen name="pickimg_grid_img_width">118dp</dimen>
+    <dimen name="pickimg_grid_img_width">118dp</dimen>\
+
+    <dimen name="pickimg_grid_dividerW">3dp</dimen>
 
     <dimen name="pickimg_popup_icon_height">70dp</dimen>
     <dimen name="pickimg_popup_icon_width">70dp</dimen>

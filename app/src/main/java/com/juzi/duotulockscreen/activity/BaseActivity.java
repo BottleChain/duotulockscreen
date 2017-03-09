@@ -28,6 +28,7 @@ public class BaseActivity extends FragmentActivity {
 //                            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
             if (!getIsFullScreen()) {
+
                 mSystemBarTintManager = new SystemBarTintManager(this);
                 // 设置状态栏状态
                 mSystemBarTintManager.setStatusBarTintEnabled(true);
